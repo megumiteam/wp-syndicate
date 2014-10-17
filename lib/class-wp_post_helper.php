@@ -306,7 +306,7 @@ class wp_post_helper {
 	}
 }
 
-function remote_get_file($url = null, $file_dir = '') {
+function remote_get_file($url = null, $file_dir = '', $headers = array()) {
 	if (!$url)
 		return false;
 
@@ -334,7 +334,7 @@ function remote_get_file($url = null, $file_dir = '') {
 	$photo = $file_dir . basename($url);
 
 	if ( !file_exists($photo) ) {
-		$response = wp_remote_get($url);
+		$response = wp_remote_get($url, $headers);
 		if ( !is_wp_error($response) && $response["response"]["code"] === 200 ) {
 			$photo_data = $response["body"];
 			file_put_contents($photo, $photo_data);

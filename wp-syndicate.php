@@ -2,11 +2,10 @@
 /*
 Plugin Name: WP Syndicate
 Plugin URI: http://digitalcube.jp
-Description: 
+Description: It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
 Author: horike
-Version: 1.0
+Version: 1.1
 Author URI: http://digitalcube.jp
-
 
 Copyright 2014 horike (email : horike37@gmail.com)
 
@@ -26,13 +25,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 if ( ! defined( 'WPSYND_DOMAIN' ) )
-	define( 'WPSYND_DOMAIN', '' );
+	define( 'WPSYND_DOMAIN', 'wp-syndicate' );
 	
 if ( ! defined( 'WPSYND_PLUGIN_URL' ) )
 	define( 'WPSYND_PLUGIN_URL', plugins_url() . '/' . dirname( plugin_basename( __FILE__ ) ));
 
 if ( ! defined( 'WPSYND_PLUGIN_DIR' ) )
 	define( 'WPSYND_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ));
+
+load_plugin_textdomain( WPSYND_DOMAIN, false, dirname(plugin_basename(__FILE__)) . '/languages' );
 	
 require_once( WPSYND_PLUGIN_DIR . '/lib/class-wp_post_helper.php' );
 require_once( WPSYND_PLUGIN_DIR . '/lib/class-logger.php' );

@@ -1,0 +1,138 @@
+# Copyright (C) 2014 WP Syndicate
+# This file is distributed under the same license as the WP Syndicate package.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Syndicate 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/wp-syndicate\n"
+"POT-Creation-Date: 2014-10-17 05:57:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: lib/class-logger.php:85
+msgid "Syndication Log"
+msgstr "シンジケーションログ"
+
+#: lib/class-logger.php:102 lib/class-logger.php:147
+msgid "status"
+msgstr "ステータス"
+
+#: modules/action.php:38
+msgid "WP Cron Error"
+msgstr "WP Cron エラー"
+
+#: modules/action.php:39
+msgid "%s of WP Cron restart, because it stopped."
+msgstr "%s のWP Cronが停止していたため、WP Cronを再起動しました。"
+
+#: modules/action.php:39 modules/action.php:115 modules/action.php:189
+#: modules/action.php:195
+msgid "action time"
+msgstr "実行時間"
+
+#: modules/action.php:114 modules/action.php:194
+msgid "feed import failed"
+msgstr "フィード取得失敗"
+
+#: modules/action.php:115
+msgid "An error occurred at a feed retrieval of %s"
+msgstr "%sのフィード取得時にエラーが発生しました"
+
+#: modules/action.php:116
+msgid "below error message"
+msgstr "以下、エラーメッセージ"
+
+#: modules/action.php:118 modules/syndicate.php:67
+msgid "feed URL"
+msgstr "フィードURL"
+
+#: modules/action.php:188
+msgid "feed import success"
+msgstr "フィード取得成功"
+
+#: modules/action.php:189
+msgid "Feed acquisition completion of %s"
+msgstr "%sのフィード取り込み完了"
+
+#: modules/action.php:190 modules/action.php:196
+msgid "below ID data updates"
+msgstr "以下のIDのデータを更新しました"
+
+#: modules/action.php:195
+msgid "Failed to some data registration of %s"
+msgstr "%sの登録時にいくつかのデータの登録に失敗しました"
+
+#: modules/admin.php:17
+msgid "save"
+msgstr "保存"
+
+#: modules/admin.php:28 modules/syndicate.php:48
+msgid "configuration"
+msgstr "設定"
+
+#: modules/admin.php:30
+msgid "error mail recipient"
+msgstr "エラーメール送信先"
+
+#: modules/admin.php:32
+msgid "feed log delete term"
+msgstr "シンジケーションログの削除間隔"
+
+#: modules/admin.php:48
+msgid "day"
+msgstr "日"
+
+#: modules/syndicate.php:32
+msgid "Syndication"
+msgstr "シンジケーション"
+
+#: modules/syndicate.php:68
+msgid "feed retrieve term"
+msgstr "フィード取得間隔"
+
+#: modules/syndicate.php:68
+msgid "min"
+msgstr "分"
+
+#: modules/syndicate.php:69
+msgid "Author ID"
+msgstr "投稿者ID"
+
+#: modules/syndicate.php:70
+msgid "Default Post Type"
+msgstr "登録時のPost Type"
+
+#: modules/syndicate.php:78
+msgid "Default Post Status"
+msgstr "登録時の記事ステータス"
+
+#: modules/syndicate.php:86
+msgid "Registration method"
+msgstr "登録方法"
+
+#: modules/syndicate.php:93
+msgid "Basic Auth User ID"
+msgstr "Basic認証User ID"
+
+#: modules/syndicate.php:94
+msgid "Basic Auth Password"
+msgstr "Basic認証パスワード"
+
+#. Plugin Name of the plugin/theme
+msgid "WP Syndicate"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://digitalcube.jp"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "horike"
+msgstr ""

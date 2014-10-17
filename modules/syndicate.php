@@ -51,23 +51,25 @@ class WP_SYNDICATE {
 	public function meta_box_wp_syndicate($post) {
 		echo wp_nonce_field('wp_syndicate_meta_box', 'wp_syndicate_meta_box_nonce');
 		
-		$feed_url = get_post_meta( get_the_ID(), 'feed-url', true );
-		$feed_retrieve_term = get_post_meta( get_the_ID(), 'feed-retrieve-term', true );
-		$author_id = get_post_meta( get_the_ID(), 'author-id', true );
+		$feed_url = get_post_meta( get_the_ID(), 'wp_syndicate-feed-url', true );
+		$feed_retrieve_term = get_post_meta( get_the_ID(), 'wp_syndicate-feed-retrieve-term', true );
+		$author_id = get_post_meta( get_the_ID(), 'wp_syndicate-author-id', true );
 		$statuses = get_post_statuses();
-		$status = get_post_meta( get_the_ID(), 'default-post-status', true );
+		$status = get_post_meta( get_the_ID(), 'wp_syndicate-default-post-status', true );
 		$post_types = get_post_types( array( 'public' => true ) );
-		$post_type = get_post_meta( get_the_ID(), 'default-post-type', true );
-		$registration_method = get_post_meta( get_the_ID(), 'registration-method', true );
+		$post_type = get_post_meta( get_the_ID(), 'wp_syndicate-default-post-type', true );
+		$registration_method = get_post_meta( get_the_ID(), 'wp_syndicate-registration-method', true );
+		$user_id = get_post_meta( get_the_ID(), 'wp_syndicate-basic-auth-user', true );
+		$password = get_post_meta( get_the_ID(), 'wp_syndicate-basic-auth-pass', true );
 
 ?>
 <table class="form-table">
-<tr><th><?php _e( 'feed URL', WPSYND_DOMAIN ) ?></th><td><input type="text" name="feed-url" size="40" value="<?php echo esc_attr($feed_url); ?>" /></td></tr>
-<tr><th><?php _e( 'feed retrieve term', WPSYND_DOMAIN ) ?></th><td><input type="number" step="1" min="1" max="999" name="feed-retrieve-term" size="20" value="<?php echo esc_attr($feed_retrieve_term); ?>" /> <?php _e( 'min', WPSYND_DOMAIN ) ?></td></tr>
-<tr><th><?php _e( 'Author ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="author-id" size="7" value="<?php echo esc_attr($author_id); ?>" /></td></tr>
+<tr><th><?php _e( 'feed URL', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-feed-url" size="40" value="<?php echo esc_attr($feed_url); ?>" /></td></tr>
+<tr><th><?php _e( 'feed retrieve term', WPSYND_DOMAIN ) ?></th><td><input type="number" step="1" min="1" max="999" name="wp_syndicate-feed-retrieve-term" size="20" value="<?php echo esc_attr($feed_retrieve_term); ?>" /> <?php _e( 'min', WPSYND_DOMAIN ) ?></td></tr>
+<tr><th><?php _e( 'Author ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-author-id" size="7" value="<?php echo esc_attr($author_id); ?>" /></td></tr>
 <tr><th><?php _e( 'Default Post Type', WPSYND_DOMAIN ) ?></th>
 <td>
-<select name="default-post-type">
+<select name="wp_syndicate-default-post-type">
 <?php foreach ( $post_types as $key => $val ) : ?>
 	<option <?php selected($post_type, $key); ?> value="<?php echo $key; ?>"><?php echo $val; ?></option>
 <?php endforeach; ?>
@@ -75,7 +77,7 @@ class WP_SYNDICATE {
 </td></tr>
 <tr><th><?php _e( 'Default Post Status', WPSYND_DOMAIN ) ?></th>
 <td>
-<select name="default-post-status">
+<select name="wp_syndicate-default-post-status">
 <?php foreach ( $statuses as $key => $val ) : ?>
 	<option <?php selected($status, $key); ?> value="<?php echo $key; ?>"><?php echo $val; ?></option>
 <?php endforeach; ?>
@@ -83,11 +85,14 @@ class WP_SYNDICATE {
 </td></tr>
 <tr><th><?php _e( 'Registration method', WPSYND_DOMAIN ) ?></th>
 <td>
-<select name="registration-method">
-	<option <?php selected($status, 'insert'); ?> value="insert">insert only</option>
-	<option <?php selected($status, 'insert-or-update'); ?> value="insert-or-update">insert or update</option>
+<select name="wp_syndicate-registration-method">
+	<option <?php selected($registration_method, 'insert'); ?> value="insert">insert only</option>
+	<option <?php selected($registration_method, 'insert-or-update'); ?> value="insert-or-update">insert or update</option>
 </select>
 </td></tr>
+<tr><th><?php _e( 'Basic Auth User ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-basic-auth-user" size="40" value="<?php echo esc_attr($user_id); ?>" /></td></tr>
+<tr><th><?php _e( 'Basic Auth Password', WPSYND_DOMAIN ) ?></th><td><input type="password" name="wp_syndicate-basic-auth-pass" size="40" value="<?php echo esc_attr($password); ?>" /></td></tr>
+
 </table>
 <?php
 	}
@@ -105,23 +110,29 @@ class WP_SYNDICATE {
 		if ( !isset($_POST['wp_syndicate_meta_box_nonce']) || !wp_verify_nonce( $_POST['wp_syndicate_meta_box_nonce'], 'wp_syndicate_meta_box' ))
 			return;
 			
-		if ( isset($_POST['feed-url']) )
-			update_post_meta( $post_id, 'feed-url', esc_url($_POST['feed-url']) );
+		if ( isset($_POST['wp_syndicate-feed-url']) )
+			update_post_meta( $post_id, 'wp_syndicate-feed-url', esc_url($_POST['wp_syndicate-feed-url']) );
 			
-		if ( isset($_POST['feed-retrieve-term']) )
-			update_post_meta( $post_id, 'feed-retrieve-term', absint($_POST['feed-retrieve-term']) );
+		if ( isset($_POST['wp_syndicate-feed-retrieve-term']) )
+			update_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', absint($_POST['wp_syndicate-feed-retrieve-term']) );
 		
-		if ( isset($_POST['author-id']) )
-			update_post_meta( $post_id, 'author-id', absint($_POST['author-id']) );
+		if ( isset($_POST['wp_syndicate-author-id']) )
+			update_post_meta( $post_id, 'wp_syndicate-author-id', absint($_POST['wp_syndicate-author-id']) );
 			
-		if ( isset($_POST['default-post-status']) )
-			update_post_meta( $post_id, 'default-post-status', trim($_POST['default-post-status']) );
+		if ( isset($_POST['wp_syndicate-default-post-status']) )
+			update_post_meta( $post_id, 'wp_syndicate-default-post-status', trim($_POST['wp_syndicate-default-post-status']) );
 			
-		if ( isset($_POST['default-post-type']) )
-			update_post_meta( $post_id, 'default-post-type', trim($_POST['default-post-type']) );
+		if ( isset($_POST['wp_syndicate-default-post-type']) )
+			update_post_meta( $post_id, 'wp_syndicate-default-post-type', trim($_POST['wp_syndicate-default-post-type']) );
 			
-		if ( isset($_POST['registration-method']) )
-			update_post_meta( $post_id, 'registration-method', trim($_POST['registration-method']) );
+		if ( isset($_POST['wp_syndicate-registration-method']) )
+			update_post_meta( $post_id, 'wp_syndicate-registration-method', trim($_POST['wp_syndicate-registration-method']) );
+
+		if ( isset($_POST['wp_syndicate-basic-auth-user']) )
+			update_post_meta( $post_id, 'wp_syndicate-basic-auth-user', trim($_POST['wp_syndicate-basic-auth-user']) );
+
+		if ( isset($_POST['wp_syndicate-basic-auth-pass']) )
+			update_post_meta( $post_id, 'wp_syndicate-basic-auth-pass', trim($_POST['wp_syndicate-basic-auth-pass']) );
 	}
 }
 new WP_SYNDICATE();
