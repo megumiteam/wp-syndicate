@@ -83,7 +83,7 @@ class WP_SYND_Action {
 		$hook = 'wp_syndicate_' . $key . '_import';
 		$event = 'wp_syndicate_' . $key;
 
-		if ( wp_next_scheduled( $hook, array( $post_id )) );
+		if ( wp_next_scheduled( $hook, array( $post_id )) )
 			wp_clear_scheduled_hook( $hook, array( $post_id ) );
 
 		wp_schedule_event( $action_time, $event, $hook, array( $post_id )  );
