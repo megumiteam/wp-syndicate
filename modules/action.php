@@ -8,6 +8,7 @@ class WP_SYND_Action {
 	private $post = '';
 	private $host = '';
 	private $match_count = 0;
+	private $media_id = '';
 
 	public function __construct() {
 		add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
@@ -100,6 +101,7 @@ class WP_SYND_Action {
 		if ( !is_object($post) )
 			return;
 
+		$this->media_id = $post_id;
 		$feed_url = get_post_meta( $post_id, 'wp_syndicate-feed-url', true );
 
 		add_action('wp_feed_options', function(&$feed, $url){
@@ -210,9 +212,8 @@ class WP_SYND_Action {
 	
 		if ( is_array($matches) && array_key_exists(2, $matches) &&  strpos($matches[2], $this->host) !== false ) {
 			$args    = array();
-			$options = get_option( 'wp_syndicate_options' );
-			$user    = $options['wp_syndicate-basic-auth-user'];
-			$pass    = $options['wp_syndicate-basic-auth-pass'];
+			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
+			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );
 			if ( !empty($user) && !empty($pass) ) {
 				$args = array(
 					'headers' =>
@@ -226,7 +227,7 @@ class WP_SYND_Action {
 				$url = home_url( 'wp-content' . $url[1] );
 				$this->match_count++;
 
-				return '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>';
+				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>', $thumnail_flg );
 			} else {
 				return $matches[0];
 			} 

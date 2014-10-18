@@ -12,11 +12,10 @@ class WP_SYND_logger {
 	
 	private function __construct() {}
 	
-	public function success( $title, $msg, $category_slug ) {
+	public function success( $title, $msg ) {
 		$args = array(
 					'post_title'    => $title,
 					'post_content'  => $msg,
-					'post_category' => $category_slug,
 					'post_author'   => 1,
 					'post_status'   => 'publish',
 					'post_type'     => 'wp-syndicate-log'
@@ -29,11 +28,10 @@ class WP_SYND_logger {
 		return $post_id;
 	}
 	
-	public function error( $title, $msg, $category_slug ) {
+	public function error( $title, $msg ) {
 		$args = array(
 					'post_title'    => $title,
 					'post_content'  => $msg,
-					'post_category' => $category_slug,
 					'post_author'   => 1,
 					'post_status'   => 'publish',
 					'post_type'     => 'wp-syndicate-log'
