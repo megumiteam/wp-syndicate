@@ -107,8 +107,6 @@ class WP_SYND_Log_Operator {
 
 	public function set_event() {
 		$action_time = time() + 60;
-		if ( wp_next_scheduled( $this->event ) )
-			wp_clear_scheduled_hook( $this->event );
 
 		wp_schedule_event( $action_time, $this->key, $this->event );
 		spawn_cron( $action_time );
