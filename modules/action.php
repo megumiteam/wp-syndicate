@@ -141,19 +141,15 @@ class WP_SYND_Action {
 			
 			if ( $registration_method == 'insert' && is_object($set_post) )
 				continue;
-			
-			//投稿時刻
-			$pub_time = $item->get_date('Y/m/d H:i:s');
-			$pub_time = strtotime($pub_time);
-			$pub_time = date_i18n('Y/m/d H:i:s', $pub_time);
-		
+
 			$this->post = new wp_post_helper(array(
 								'ID' => $set_post_id,
 								'post_name' => $slug,
 								'post_author' => get_post_meta( $post_id, 'wp_syndicate-author-id', true ),
-								'post_date' => $pub_time,
+								'post_date' => apply_filters( 'wp_syndicate_get_date', $item->get_date('Y/m/d H:i:s'), $post_id ),
 								'post_type' => get_post_meta( $post_id, 'wp_syndicate-default-post-type', true ),
-								'post_status' => get_post_meta( $post_id, 'wp_syndicate-default-post-status', true ), 								'post_title' => $item->get_title(),
+								'post_status' => get_post_meta( $post_id, 'wp_syndicate-default-post-status', true ),
+ 								'post_title' => apply_filters( 'wp_syndicate_get_title', $item->get_title(), $post_id ),
 								'post_content' => '',
 							));
 							
@@ -172,7 +168,7 @@ class WP_SYND_Action {
 			$this->match_count = 0;
 
 			$this->post->set(array(
-								'post_content' => $content
+								'post_content' => apply_filters( 'wp_syndicate_get_content', $content, $post_id )
 							));
 			$this->post->add_meta( 'wp_syndicate-origin-of-syndication-slug', $post->post_name, true );
 			$this->post->add_meta( 'wp_syndicate-origin-of-syndication-siteurl', $this->host, true );
