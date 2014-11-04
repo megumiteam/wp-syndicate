@@ -90,7 +90,8 @@ class WP_SYND_Log_Operator {
 	    								'can_export' => true,
 	    								'capability_type' => 'feed_log',
     									'capabilities'    => $capabilities,
-    									'map_meta_cap' => true
+    									'map_meta_cap' => true,
+    									'exclude_from_search' => true
 	    							));
 
 	    register_taxonomy(
