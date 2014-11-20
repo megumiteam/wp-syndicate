@@ -139,6 +139,13 @@ class WP_SYND_Action {
 			$set_post = get_page_by_path( sanitize_title($slug), OBJECT, $post_type );
 			$set_post_id = $set_post == null ? '' : $set_post->ID;
 			
+			if ( empty($set_post_id) ) {
+				global $wpdb;
+				$db_ret = $wpdb->get_row( $wpdb->prepare( "SELECT count(1) as cnt FROM $wpdb->postmeta WHERE meta_key='%s'", $slug) );
+				if ( $db_ret === null || $db_ret->cnt !== '0' )
+					continue; 
+			}
+			
 			if ( $registration_method == 'insert' && is_object($set_post) )
 				continue;
 
@@ -177,6 +184,7 @@ class WP_SYND_Action {
 			if ( !$update_post_id ) {
 				$flg = false;
 			} else {
+				update_post_meta( $update_post_id, $slug, 1 );
 				do_action( 'wp_syndicate_save_post', $update_post_id, $item );
 				$post_ids[] = $update_post_id;
 			}
