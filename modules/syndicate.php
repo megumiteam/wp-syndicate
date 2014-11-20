@@ -55,6 +55,7 @@ class WP_SYNDICATE {
 		$feed_retrieve_term = get_post_meta( get_the_ID(), 'wp_syndicate-feed-retrieve-term', true );
 		$author_id = get_post_meta( get_the_ID(), 'wp_syndicate-author-id', true );
 		$statuses = get_post_statuses();
+		unset($statuses['pending']);
 		$status = get_post_meta( get_the_ID(), 'wp_syndicate-default-post-status', true );
 		$post_types = get_post_types( array( 'public' => true ) );
 		$post_type = get_post_meta( get_the_ID(), 'wp_syndicate-default-post-type', true );
