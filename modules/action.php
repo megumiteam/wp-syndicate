@@ -102,7 +102,7 @@ class WP_SYND_Action {
 			return;
 
 		$this->media_id = $post_id;
-		$feed_url = get_post_meta( $post_id, 'wp_syndicate-feed-url', true );
+		$feed_url = html_entity_decode(get_post_meta( $post_id, 'wp_syndicate-feed-url', true ), ENT_QUOTES, 'UTF-8');
 
 		add_action('wp_feed_options', function(&$feed, $url){
     		$feed->set_timeout(30); // set to 30 seconds
@@ -192,13 +192,15 @@ class WP_SYND_Action {
 		
 		if ( $flg ) {
 			$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'feed import success', WPSYND_DOMAIN );
-			$msg = sprintf( __( 'Feed acquisition completion of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n" . __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
+			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
+			$msg .= sprintf( __( 'Feed acquisition completion of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n" . __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 			$msg .= __( 'below ID data updates', WPSYND_DOMAIN ) . "\n";
 			$msg .= implode( "\n", $post_ids );
 			WP_SYND_logger::get_instance()->success( $subject, $msg );
 		} else {
 			$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'feed import failed', WPSYND_DOMAIN );
-			$msg = sprintf( __( 'Failed to some data registration of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
+			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
+			$msg .= sprintf( __( 'Failed to some data registration of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 			$msg .= __( 'below ID data updates', WPSYND_DOMAIN ) . "\n";
 			$msg .= implode( "\n", $post_ids );
 			$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
