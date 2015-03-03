@@ -171,7 +171,7 @@ class WP_SYND_Action {
 			}
 			$content = apply_filters( 'the_content', $item->get_content() );
 			$this->match_count = 0;
-			$content = preg_replace_callback( '/<img(.*)src="(.*?)"(.*)\/>/',  array($this, 'update_link'), $content, -1 );
+			$content = preg_replace_callback( '/<img(.*)src="(.*?)"(.*)>/',  array($this, 'update_link'), $content, -1 );
 			$this->match_count = 0;
 
 			$this->post->set(array(
@@ -216,7 +216,7 @@ class WP_SYND_Action {
 
 	public function update_link( $matches ) {
 	
-		if ( is_array($matches) && array_key_exists(2, $matches) &&  strpos($matches[2], $this->host) !== false ) {
+		if ( is_array($matches) && array_key_exists(2, $matches) ) {
 			$args    = array();
 			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );

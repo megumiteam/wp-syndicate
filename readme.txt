@@ -3,7 +3,7 @@ Contributors: horike,megumithemes
 Tags:feed, rss
 Requires at least: 3.9.1
 Tested up to: 4.0
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 
 == Description ==
 It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
@@ -48,4 +48,7 @@ gmail:horike37@gmail.com
 * Add unigue control
 
 = 1.1.8 =
+* Bug fix
+
+= 1.1.9 =
 * Bug fix
