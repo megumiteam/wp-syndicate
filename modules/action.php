@@ -49,8 +49,9 @@ class WP_SYND_Action {
 	public function cron_schedules($schedules) {
 		$posts = get_posts($this->args);
 
-		if ( empty($posts) )
-			return;
+		if ( empty($posts) ) {
+			return $schedules;
+		}
 
 		foreach ( $posts as $post ) {
 			$key = 'wp_syndicate_' . $post->post_name;
