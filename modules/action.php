@@ -10,6 +10,7 @@ class WP_SYND_Action {
 	private $match_count = 0;
 	private $media_id = '';
 	private $is_enclosure = false;
+	private $enclosure_url = '';
 
 	public function __construct() {
 		add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
@@ -174,9 +175,9 @@ class WP_SYND_Action {
 			}
 
 			$content = apply_filters( 'the_content', $item->get_content() );
-			if ( $enclosure = $item->get_enclosure() && !empty($enclosure->link) ) {
+			if ( $item->get_enclosure() && !empty($item->get_enclosure()->link) ) {
 				$this->is_enclosure = true;
-				$this->set_enclosure( $enclosure->link );
+				$this->set_enclosure( $item->get_enclosure()->link );
 			} 
 
 			$this->match_count = 0;
@@ -242,12 +243,17 @@ class WP_SYND_Action {
 					$thumnail_flg = $this->match_count > 0 ? false : true;
 				}
 
-				$this->post->add_media($media, '', '', '', $thumnail_flg);
 				$url = preg_split( '/wp-content/', $media );
 				$url = home_url( 'wp-content' . $url[1] );
+
+				if ( $url == $this->enclosure_url ) {
+					$thumnail_flg = true;
+				}
+				
+				$this->post->add_media($media, '', '', '', $thumnail_flg);
 				$this->match_count++;
 
-				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>', $thumnail_flg );
+				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>', $thumnail_flg, $url, $this->enclosure_url );
 			} else {
 				return $matches[0];
 			} 
@@ -268,6 +274,9 @@ class WP_SYND_Action {
 			}
 			if ( $media = remote_get_file($link, '', $args) ) {
 				$this->post->add_media($media, '', '', '', true);
+				$url = preg_split( '/wp-content/', $media );
+				$url = home_url( 'wp-content' . $url[1] );
+				$this->enclosure_url = $url;
 			}
 		}
 	}
