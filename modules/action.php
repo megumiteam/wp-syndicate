@@ -253,7 +253,7 @@ class WP_SYND_Action {
 				$this->post->add_media($media, '', '', '', $thumnail_flg);
 				$this->match_count++;
 
-				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>', $thumnail_flg, $url, $this->enclosure_url );
+				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>', $thumnail_flg, $url, $this->enclosure_url, $this->match_count );
 			} else {
 				return $matches[0];
 			} 

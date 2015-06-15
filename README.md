@@ -62,3 +62,6 @@ gmail:horike37@gmail.com
 
 = 1.1.12 =
 * Bug fix
+
+= 1.1.13 =
+* Add filter hook args
