@@ -181,7 +181,7 @@ class WP_SYND_Action {
 			} 
 
 			$this->match_count = 0;
-			$content = preg_replace_callback( '/<img(.*)src="(.*?)"(.*)>/',  array($this, 'update_link'), $content, -1 );
+			$content = preg_replace_callback( '/#<img([^>]*)src=["\']([^"\']+)["\']([^>]*)>#i/',  array($this, 'update_link'), $content, -1 );
 			$this->match_count = 0;
 			$this->post->set(array(
 								'post_content' => apply_filters( 'wp_syndicate_get_content', $content, $post_id )
@@ -253,7 +253,7 @@ class WP_SYND_Action {
 				$this->post->add_media($media, '', '', '', $thumnail_flg);
 				$this->match_count++;
 
-				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '/>', $thumnail_flg, $url, $this->enclosure_url, $this->match_count );
+				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '>', $thumnail_flg, $url, $this->enclosure_url, $this->match_count );
 			} else {
 				return $matches[0];
 			} 
