@@ -3,7 +3,7 @@ Contributors: horike,megumithemes
 Tags:feed, rss
 Requires at least: 3.9.1
 Tested up to: 4.2.2
-Stable tag: 1.1.15
+Stable tag: 1.1.16
 
 == Description ==
 It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
@@ -65,5 +65,5 @@ gmail:horike37@gmail.com
 = 1.1.13 =
 * Add filter hook args
 
-= 1.1.14, 1.1.15 =
+= 1.1.14, 1.1.15, 1.1.16 =
 * Bug fix
