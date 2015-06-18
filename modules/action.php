@@ -181,7 +181,8 @@ class WP_SYND_Action {
 			} 
 
 			$this->match_count = 0;
-			$content = preg_replace_callback( '/#<img([^>]*)src=["\']([^"\']+)["\']([^>]*)>#i/',  array($this, 'update_link'), $content, -1 );
+			$content = preg_replace_callback( '#<img([^>]*)src=["\']([^"\']+)["\']([^>]*)>#i',  array($this, 'update_link'), $content, -1 );
+var_dump($content);
 			$this->match_count = 0;
 			$this->post->set(array(
 								'post_content' => apply_filters( 'wp_syndicate_get_content', $content, $post_id )
