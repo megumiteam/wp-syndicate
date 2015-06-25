@@ -110,6 +110,7 @@ class WP_SYND_Action {
 		add_action('wp_feed_options', function(&$feed, $url){
     		$feed->set_timeout(30); // set to 30 seconds
             $feed->force_feed(true);
+            $feed->enable_cache(false);
 		}, 10, 2);
 		
 		add_filter( 'wp_feed_cache_transient_lifetime' , array( $this, 'return_0' ) );
