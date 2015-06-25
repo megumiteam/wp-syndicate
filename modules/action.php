@@ -160,19 +160,22 @@ class WP_SYND_Action {
 				continue;
 			}
 
-			$this->post = new wp_post_helper(array(
+			$post_args = array(
 								'ID' => $set_post_id,
 								'post_name' => $slug,
-								'post_author' => get_post_meta( $post_id, 'wp_syndicate-author-id', true ),
 								'post_date' => apply_filters( 'wp_syndicate_get_date', $item->get_date('Y/m/d H:i:s'), $post_id ),
-								'post_type' => get_post_meta( $post_id, 'wp_syndicate-default-post-type', true ),
-								'post_status' => get_post_meta( $post_id, 'wp_syndicate-default-post-status', true ),
  								'post_title' => apply_filters( 'wp_syndicate_get_title', $item->get_title(), $post_id ),
 								'post_content' => '',
-							));
+							);
+			if ( !$updated ) {
+				$post_args['post_author'] = get_post_meta( $post_id, 'wp_syndicate-author-id', true );
+				$post_args['post_status'] = get_post_meta( $post_id, 'wp_syndicate-default-post-status', true );
+				$post_args['post_type'] = get_post_meta( $post_id, 'wp_syndicate-default-post-type', true );
+			}
+			$this->post = new wp_post_helper($post_args);
 
 			//画像の登録
-			if ( $set_post_id ) {
+			if ( $updated ) {
 				$images = get_attached_media( 'image', $set_post_id );
 				if ( is_array( $images ) ) {
 					foreach ( $images as $image ) {

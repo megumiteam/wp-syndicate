@@ -71,3 +71,6 @@ gmail:horike37@gmail.com
 
 = 1.1.17 =
 * Add filter hook args
+
+= 1.1.18 =
+* When update post, exclude post_status, post_author, post_type 
