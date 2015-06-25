@@ -150,8 +150,15 @@ class WP_SYND_Action {
 					continue; 
 			}
 			
-			if ( $registration_method == 'insert' && is_object($set_post) )
+			if ( $registration_method == 'insert' && is_object($set_post) ) {
 				continue;
+			}
+
+			$updated = empty($set_post_id) ? false : true;
+			$is_skip = apply_filters( 'wp_syndicate_is_skip', false, $item, $updated, $set_post_id, $post_id );
+			if ( $is_skip ) {
+				continue;
+			}
 
 			$this->post = new wp_post_helper(array(
 								'ID' => $set_post_id,
@@ -194,7 +201,7 @@ class WP_SYND_Action {
 				$flg = false;
 			} else {
 				update_post_meta( $update_post_id, $slug, 1 );
-				do_action( 'wp_syndicate_save_post', $update_post_id, $item );
+				do_action( 'wp_syndicate_save_post', $update_post_id, $item, $updated );
 				$post_ids[] = $update_post_id;
 			}
 		} 
