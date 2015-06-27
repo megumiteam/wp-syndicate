@@ -2,7 +2,13 @@
 
 class WP_Syndicate_Test extends WP_UnitTestCase {
 
-	private $feed = 'https://wordpress.org/news/feed/';
+	private $feeds = array(
+						'sample-1' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-1.xml',
+						'sample-2' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-2.xml',
+						'sample-3' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-3.xml',
+						'sample-4' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-4.xml',
+						'sample-5' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-5.xml',
+						);
 	private $action;
 
 	public function setUp() {
@@ -14,55 +20,142 @@ class WP_Syndicate_Test extends WP_UnitTestCase {
 	 */
 	function test_set_import_schedule() {
 		$key = 'test';
-		$post_id = $this->factory->post->create(array('post_type' => 'wp-syndicate', 'post_name' => $key));
-		add_post_meta( $post_id, 'wp_syndicate-feed-url', $this->feed );
-		add_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', 5 );
-		add_post_meta( $post_id, 'wp_syndicate-author-id', 1 );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-status', 'publish' );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-type', 'post' );
-		add_post_meta( $post_id, 'wp_syndicate-registration-method', 'insert' );
+		$feed_id = $this->create_data( $key, $this->feeds['sample-1'] );
 
-		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $post_id ) );
+		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $feed_id ) );
 
 		$this->assertInternalType( 'int', $event );
 		$this->assertLessThanOrEqual( time() + 5*60, $event );
 	}
 
 	/**
-	 * @取り込みが正しく実施できるかのテスト
+	 * @取り込みの設定をゴミ箱に変更すればスケジュールから削除される
+	 */
+	function test_set_import_schedule_to_trash() {
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-1'] );
+
+		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $feed_id ) );
+
+		$this->assertInternalType( 'int', $event );
+		$this->assertLessThanOrEqual( time() + 5*60, $event );
+		
+		wp_trash_post( $feed_id );
+		
+		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $feed_id ) );
+		$this->assertEquals( false, $event );
+	}
+
+	/**
+	 * @取り込みの各項目が正しく取り込まれるかテスト
 	 */
 	function test_import() {
 	
-		$key = 'test2';
-		$post_id = $this->factory->post->create(array('post_type' => 'wp-syndicate', 'post_name' => $key));
-		add_post_meta( $post_id, 'wp_syndicate-feed-url', $this->feed );
-		add_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', 5 );
-		add_post_meta( $post_id, 'wp_syndicate-author-id', 1 );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-status', 'publish' );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-type', 'post' );
-		add_post_meta( $post_id, 'wp_syndicate-registration-method', 'insert' );
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-1'] );
 
-		$this->action->import($post_id);
-		
-		$rss = fetch_feed( $this->feed );
-		$rss_items = $rss->get_items(0, 50);
-		
-		$rss_title_array = array();
-		foreach ( $rss_items as $item ) {
-			$rss_title_array[] = $item->get_title();
-		}
-		
-		$post_title_array = array();
-		
+		$this->action->import($feed_id);
+
 		$posts = get_posts( array('posts_per_page' => 50) );
-		foreach ( $posts as $post ) {
-			$post_title_array[] = $post->post_title;
-		}
-		$this->assertEquals( $rss_title_array, $post_title_array );
-		
-		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 1, count($posts) );
 
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		//タイトル
+		$this->assertEquals( 'sample-1', $post->post_title );
+		//本文
+		$this->assertEquals( '<p>sample sample</p>' . "\n", $post->post_content );
+		//投稿ステータス
+		$this->assertEquals( 'publish', $post->post_status );
+		//アイキャッチ
+		$this->assertRegExp( '/sample-1\.jpg$/', wp_get_attachment_url( get_post_thumbnail_id($post->ID) ));
+		//投稿者
+		$this->assertEquals( '1', $post->post_author );
+		//投稿タイプ
+		$this->assertEquals( 'post', $post->post_type );
+		//投稿日
+		$this->assertEquals( '2015-06-26 12:00:00', $post->post_date );
+
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
 		$this->assertEquals( 1, count($logs) );
+	}
+
+	/**
+	 * @privateでの取り込みテスト
+	 */
+	function test_import_status_private() {
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'private' );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( 'private', $post->post_status );
+	}
+
+	/**
+	 * @draftでの取り込みテスト
+	 */
+	function test_import_status_draft() {
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'draft' );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+
+		$this->assertEquals( 'draft', $post->post_status );
+	}
+
+	/**
+	 * @post_type=pageでの取り込みテスト
+	 */
+	function test_import_type_page() {
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'publish', 'page' );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'page' );
+		$this->assertEquals( 'page', $post->post_type );
+	}
+
+	/**
+	 * @投稿者の取り込みテスト
+	 */
+	function test_import_author() {
+		$key = 'test';
+		$user_id = $this->factory->user->create();
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'publish', 'post', 'insert-or-update', $user_id );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( $user_id, $post->post_author );
+	}
+
+	/**
+	 * @enclosureタグが無いときは本文1枚目の画像がアイキャッチに登録される
+	 */
+	function test_import_not_enclosure() {
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-5'] );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		//アイキャッチ
+		$this->assertRegExp( '/sample-5\.jpg$/', wp_get_attachment_url( get_post_thumbnail_id($post->ID) ));
+	}
+	 
+	/**
+	 * @insertとinsert or upddatが正しく動いているかテスト
+	 */
+	function test_import_inser_or_update(){
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'publish', 'post', 'insert' );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( 'sample-3', $post->post_title );
+
+		update_post_meta( $feed_id, 'wp_syndicate-feed-url', $this->feeds['sample-4'] );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( 'sample-3', $post->post_title );
+
+		update_post_meta( $feed_id, 'wp_syndicate-registration-method', 'insert-or-update' );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( 'sample-4', $post->post_title );
 	}
 
 	/**
@@ -70,83 +163,159 @@ class WP_Syndicate_Test extends WP_UnitTestCase {
 	 */
 	function test_import_not_duplicate() {
 	
-		$key = 'test3';
-		$post_id = $this->factory->post->create(array('post_type' => 'wp-syndicate', 'post_name' => $key));
-		add_post_meta( $post_id, 'wp_syndicate-feed-url', $this->feed );
-		add_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', 5 );
-		add_post_meta( $post_id, 'wp_syndicate-author-id', 1 );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-status', 'publish' );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-type', 'post' );
-		add_post_meta( $post_id, 'wp_syndicate-registration-method', 'insert' );
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'] );
 
-		$this->action->import($post_id);
-		$this->action->import($post_id);
-		
-		$rss = fetch_feed( $this->feed );
-		$rss_items = $rss->get_items(0, 50);
-		
-		$rss_title_array = array();
-		foreach ( $rss_items as $item ) {
-			$rss_title_array[] = $item->get_title();
-		}
-		
-		$post_title_array = array();
+		$this->action->import($feed_id);
 		$posts = get_posts( array('posts_per_page' => 50) );
-		foreach ( $posts as $post ) {
-			$post_title_array[] = $post->post_title;
-		}
-		$this->assertEquals( $rss_title_array, $post_title_array );
+		$this->assertEquals( 1, count($posts) );
+
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( 'sample-3', $post->post_title );
+		$this->assertEquals( '<p>hoge</p>' . "\n", $post->post_content );
+		$this->assertEquals( 'publish', $post->post_status );
+		$this->assertEquals( '1', $post->post_author );
+		$this->assertEquals( 'post', $post->post_type );
+		$this->assertEquals( '2015-06-26 14:00:00', $post->post_date );
+
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 1, count($logs) );
 		
-		update_post_meta( $post_id, 'wp_syndicate-registration-method', 'insert-or-update' );
-		
-		$this->action->import($post_id);
-		
-		$post_title_array = array();
+		$this->action->import($feed_id);
 		$posts = get_posts( array('posts_per_page' => 50) );
-		foreach ( $posts as $post ) {
-			$post_title_array[] = $post->post_title;
-		}
-		$this->assertEquals( $rss_title_array, $post_title_array );
+		$this->assertEquals( 1, count($posts) );
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 2, count($logs) );
+		
+		update_post_meta( $feed_id, 'wp_syndicate-registration-method', 'insert-or-update' );
+		$this->action->import($feed_id);
+		$posts = get_posts( array('posts_per_page' => 50) );
+		$this->assertEquals( 1, count($posts) );
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 3, count($logs) );
+	}
+
+	/**
+	 * @2回目の取り込みで正しく更新が行えているかのテスト
+	 */
+	function test_import_update() {
+	
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-1'], 'publish', 'post', 'insert-or-update' );
+
+		$this->action->import($feed_id);
+
+		$posts = get_posts( array('posts_per_page' => 50) );
+		$this->assertEquals( 1, count($posts) );
+
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		//タイトル
+		$this->assertEquals( 'sample-1', $post->post_title );
+		//本文
+		$this->assertEquals( '<p>sample sample</p>' . "\n", $post->post_content );
+		//投稿ステータス
+		$this->assertEquals( 'publish', $post->post_status );
+		//アイキャッチ
+		$this->assertRegExp( '/sample-1\.jpg$/', wp_get_attachment_url( get_post_thumbnail_id($post->ID) ));
+		//投稿者
+		$this->assertEquals( '1', $post->post_author );
+		//投稿タイプ
+		$this->assertEquals( 'post', $post->post_type );
+		//投稿日
+		$this->assertEquals( '2015-06-26 12:00:00', $post->post_date );
+
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 1, count($logs) );
+		
+		update_post_meta( $feed_id, 'wp_syndicate-feed-url', $this->feeds['sample-2'] );
+
+		$this->action->import($feed_id);
+
+		$posts = get_posts( array('posts_per_page' => 50) );
+		$this->assertEquals( 1, count($posts) );
+
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		//タイトル
+		$this->assertEquals( 'sample-2', $post->post_title );
+		//本文
+		$this->assertEquals( '<p>sample sample sample</p>' . "\n", $post->post_content );
+		//投稿ステータス
+		$this->assertEquals( 'publish', $post->post_status );
+		//アイキャッチ
+		$this->assertRegExp( '/sample-2\.jpg$/', wp_get_attachment_url( get_post_thumbnail_id($post->ID) ));
+		//投稿者
+		$this->assertEquals( '1', $post->post_author );
+		//投稿タイプ
+		$this->assertEquals( 'post', $post->post_type );
+		//投稿日
+		$this->assertEquals( '2015-06-26 13:00:00', $post->post_date );
+
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 2, count($logs) );
+	}
+
+	/**
+	 * @2回目の取り込みでpost_status, authorは変更されないことをテスト
+	 */
+	function test_import_update_meta() {
+	
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'publish', 'post', 'insert-or-update' );
+
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		//タイトル
+		$this->assertEquals( 'sample-3', $post->post_title );
+		//本文
+		$this->assertEquals( '<p>hoge</p>' . "\n", $post->post_content );
+		//投稿ステータス
+		$this->assertEquals( 'publish', $post->post_status );
+		//投稿者
+		$this->assertEquals( 1, $post->post_author );
+		//投稿タイプ
+		$this->assertEquals( 'post', $post->post_type );
+		//投稿日
+		$this->assertEquals( '2015-06-26 14:00:00', $post->post_date );
+
+		$user_id = $this->factory->user->create();
+		wp_update_post(array( 'ID' => $post->ID, 'post_status' => 'draft', 'post_author' => $user_id ));
+		update_post_meta( $feed_id, 'wp_syndicate-feed-url', $this->feeds['sample-4'] );
+
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+
+		$this->action->import($feed_id);
+
+		$posts = get_posts( array('posts_per_page' => 50, 'post_type' => 'any') );
+		$this->assertEquals( 1, count($posts) );
+
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		//タイトル
+		$this->assertEquals( 'sample-4', $post->post_title );
+		//本文
+		$this->assertEquals( '<p>hoge fuga</p>' . "\n", $post->post_content );
+		//投稿ステータス
+		$this->assertEquals( 'draft', $post->post_status );
+		//投稿者
+		$this->assertEquals( $user_id, $post->post_author );
+		//投稿タイプ
+		$this->assertEquals( 'post', $post->post_type );
+		//投稿日
+		$this->assertEquals( '2015-06-26 15:00:00', $post->post_date );
+
+		$logs = get_posts( array('post_type' => 'wp-syndicate-log') );
+		$this->assertEquals( 2, count($logs) );
 	}
 	
-	/**
-	 * @取り込みの設定をゴミ箱に変更すればスケジュールから削除される
-	 */
-	function test_set_import_schedule_to_trash() {
-		$key = 'test4';
+	function create_data( $key, $feed, $post_status = 'publish', $post_type = 'post', $mode = 'insert', $user_id =1 ) {
 		$post_id = $this->factory->post->create(array('post_type' => 'wp-syndicate', 'post_name' => $key));
-		add_post_meta( $post_id, 'wp_syndicate-feed-url', $this->feed );
+		add_post_meta( $post_id, 'wp_syndicate-feed-url', $feed );
 		add_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', 5 );
-		add_post_meta( $post_id, 'wp_syndicate-author-id', 1 );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-status', 'publish' );
-		add_post_meta( $post_id, 'wp_syndicate-default-post-type', 'post' );
-		add_post_meta( $post_id, 'wp_syndicate-registration-method', 'insert' );
-
-		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $post_id ) );
-
-		$this->assertInternalType( 'int', $event );
-		$this->assertLessThanOrEqual( time() + 5*60, $event );
+		add_post_meta( $post_id, 'wp_syndicate-author-id', $user_id );
+		add_post_meta( $post_id, 'wp_syndicate-default-post-status', $post_status );
+		add_post_meta( $post_id, 'wp_syndicate-default-post-type', $post_type );
+		add_post_meta( $post_id, 'wp_syndicate-registration-method', $mode );
 		
-		wp_trash_post( $post_id );
-		
-		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $post_id ) );
-		$this->assertEquals( false, $event );
+		return $post_id;
 	}
-
-	/**
-	 * @wp_cronにログの削除スケジュールが登録されるかのテスト
-	 */
-	function test_set_delete_log_schedule() {
-
-		//$event = wp_next_scheduled( 'wp_syndicate_log_delete_log' );
-
-		//$this->assertInternalType( 'int', $event );
-	}
-
-// todo
-//- クーロンにログの削除イベントが登録される
-//- 取り込みのステータスチェック
-//- プラグインを無効化したらイベントが削除される
-
 }
 

@@ -39,7 +39,7 @@ class WP_SYND_Action {
 			if ( !wp_next_scheduled( $hook, array( $post->ID ) ) ) {
 				$this->set_event($post->ID);
 				$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'WP Cron Error', WPSYND_DOMAIN );
-				$msg  = sprintf( __( '%s of WP Cron restart, because it stopped.', WPSYND_DOMAIN ), $hooke ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
+				$msg  = sprintf( __( '%s of WP Cron restart, because it stopped.', WPSYND_DOMAIN ), $hook ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 				$msg .= admin_url();
 				$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
 				$options = get_option( 'wp_syndicate_options' );
@@ -242,10 +242,11 @@ class WP_SYND_Action {
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );
 			if ( !empty($user) && !empty($pass) ) {
 				$args = array(
-					'headers' =>
-						array( 'Authorization' => 'Basic ' . base64_encode( $user . ':' . $pass ) )
+					'headers' => array( 'Authorization' => 'Basic ' . base64_encode( $user . ':' . $pass ) )
 				);
 			}
+
+			$args['timeout'] = 30;
 			if ( $media = remote_get_file($matches[2], '', $args) ) {
 
 				if ( $this->is_enclosure === true ) {
@@ -279,10 +280,11 @@ class WP_SYND_Action {
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );
 			if ( !empty($user) && !empty($pass) ) {
 				$args = array(
-					'headers' =>
-						array( 'Authorization' => 'Basic ' . base64_encode( $user . ':' . $pass ) )
+					'headers' => array( 'Authorization' => 'Basic ' . base64_encode( $user . ':' . $pass ) )
 				);
 			}
+
+			$args['timeout'] = 30;
 			if ( $media = remote_get_file($link, '', $args) ) {
 				$this->post->add_media($media, '', '', '', true);
 				$url = preg_split( '/wp-content/', $media );
