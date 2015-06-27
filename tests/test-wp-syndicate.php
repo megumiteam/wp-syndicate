@@ -138,9 +138,9 @@ class WP_Syndicate_Test extends WP_UnitTestCase {
 	}
 	 
 	/**
-	 * @insertとinsert or upddatが正しく動いているかテスト
+	 * @insertモードの時は上書きされないテスト
 	 */
-	function test_import_inser_or_update(){
+	function test_import_insert(){
 		$key = 'test';
 		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'publish', 'post', 'insert' );
 		$this->action->import($feed_id);
@@ -152,14 +152,26 @@ class WP_Syndicate_Test extends WP_UnitTestCase {
 		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
 		$this->assertEquals( 'sample-3', $post->post_title );
 
-		update_post_meta( $feed_id, 'wp_syndicate-registration-method', 'insert-or-update' );
+	}
+
+	/**
+	 * @insert or upddatモードの時は上書きされるテスト
+	 */
+	function test_import_inser_or_update(){
+		$key = 'test';
+		$feed_id = $this->create_data( $key, $this->feeds['sample-3'], 'publish', 'post', 'insert-or-update' );
+		$this->action->import($feed_id);
+		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
+		$this->assertEquals( 'sample-3', $post->post_title );
+
+		update_post_meta( $feed_id, 'wp_syndicate-feed-url', $this->feeds['sample-4'] );
 		$this->action->import($feed_id);
 		$post = get_page_by_path( sanitize_title($key.'_100'), OBJECT, 'post' );
 		$this->assertEquals( 'sample-4', $post->post_title );
 	}
 
 	/**
-	 * @取り込みが重複しないかのテスト
+	 * @同じ記事が重複して取り込まれないテスト
 	 */
 	function test_import_not_duplicate() {
 	
@@ -196,7 +208,7 @@ class WP_Syndicate_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @2回目の取り込みで正しく更新が行えているかのテスト
+	 * @insert or upddatモードの各項目が正しく更新出来ているかテスト
 	 */
 	function test_import_update() {
 	
@@ -255,7 +267,7 @@ class WP_Syndicate_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @2回目の取り込みでpost_status, authorは変更されないことをテスト
+	 * @insert or upddatモードの上書き時にpost_status, authorは変更されないことをテスト
 	 */
 	function test_import_update_meta() {
 	
