@@ -41,7 +41,7 @@ class WP_SYND_Action {
 				$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'WP Cron Error', WPSYND_DOMAIN );
 				$msg  = sprintf( __( '%s of WP Cron restart, because it stopped.', WPSYND_DOMAIN ), $hook ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 				$msg .= admin_url();
-				$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
+				WP_SYND_logger::get_instance()->error( $subject, $msg );
 				$options = get_option( 'wp_syndicate_options' );
 				wp_mail( $options['error_mail'], $subject, $msg );
 			}
@@ -60,7 +60,7 @@ class WP_SYND_Action {
 			$interval_min = get_post_meta( $post->ID, 'wp_syndicate-feed-retrieve-term', true );
 			$interval = intval($interval_min)*60;
 			$display = get_the_title( $post->ID );
-			$schedules[$key] = array( 'interval' => $interval, 'display' => $interval_min . 'min' );
+			$schedules[$key] = array( 'interval' => $interval, 'display' => $display );
 		}
 
 		return $schedules;
@@ -107,11 +107,11 @@ class WP_SYND_Action {
 		$this->media_id = $post_id;
 		$feed_url = html_entity_decode(get_post_meta( $post_id, 'wp_syndicate-feed-url', true ), ENT_QUOTES, 'UTF-8');
 
-		add_action('wp_feed_options', function(&$feed, $url){
-    		$feed->set_timeout(30); // set to 30 seconds
-            $feed->force_feed(true);
-            $feed->enable_cache(false);
-		}, 10, 2);
+		add_action('wp_feed_options', function(&$feed){
+			$feed->set_timeout(30);
+			$feed->force_feed(true);
+			$feed->enable_cache(false);
+		}, 10);
 		
 		add_filter( 'wp_feed_cache_transient_lifetime' , array( $this, 'return_0' ) );
 		$rss = fetch_feed( $feed_url );
