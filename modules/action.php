@@ -274,7 +274,7 @@ class WP_SYND_Action {
 	}
 	
 	public function set_enclosure($link) {
-		if ( !empty($link) ) {
+		if ( !empty($link) && is_object($this->post) && ia_a($this->post, 'wp_post_helper') ) {
 			$args    = array();
 			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );
