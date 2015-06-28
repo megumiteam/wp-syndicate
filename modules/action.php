@@ -5,12 +5,12 @@ class WP_SYND_Action {
 					'posts_per_page' => -1,
 					'post_status' => 'publish'
 				);
-	private $post = '';
-	private $host = '';
+	private $post;
+	private $host;
 	private $match_count = 0;
-	private $media_id = '';
+	private $media_id;
 	private $is_enclosure = false;
-	private $enclosure_url = '';
+	private $enclosure_url;
 
 	public function __construct() {
 		add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
@@ -236,7 +236,7 @@ class WP_SYND_Action {
 
 	public function update_link( $matches ) {
 	
-		if ( is_array($matches) && array_key_exists(2, $matches) ) {
+		if ( is_array($matches) && array_key_exists(2, $matches) && isset($this->post) && is_object($this->post) && is_a($this->post, 'wp_post_helper') ) {
 			$args    = array();
 			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );
