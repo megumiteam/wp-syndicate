@@ -1,0 +1,21 @@
+{
+    "name": "wp-syndicate",
+    "type": "wordpress-plugin",
+    "description": "It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.",
+    "license": "GPL2+",
+    "authors": [
+        {
+            "name": "Takahiro Horike"
+        }
+    ],
+    "require": {
+        "composer/installers": "~1.0"
+    },
+    "require-dev": {
+        "wp-coding-standards/wpcs": "dev-develop"
+    },
+    "scripts": {
+        "post-install-cmd": "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs",
+        "post-update-cmd" : "\"vendor/bin/phpcs\" --config-set installed_paths vendor/wp-coding-standards/wpcs"
+    }
+}
