@@ -4,7 +4,7 @@
 * Tags:feed, rss
 * Requires at least: 4.1
 * Tested up to: 4.2.2
-* Stable tag: 1.1.19
+* Stable tag: 1.1.20
 
 ## Description
 It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
@@ -77,3 +77,6 @@ gmail:horike37@gmail.com
 
 = 1.1.19 =
 * Simple Pie cache is disable
+
+= 1.1.20 =
+* Add import Test

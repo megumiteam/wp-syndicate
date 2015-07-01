@@ -45,7 +45,12 @@ class WP_SYNDICATE {
 	}
 
 	public function add_meta_box() {
+		global $hook_suffix;
+
 		add_meta_box( 'wp_syndicate_meta_box', __( 'configuration', WPSYND_DOMAIN ), array( $this, 'meta_box_wp_syndicate' ),'wp-syndicate');
+		if ( $hook_suffix == 'post.php' ) {
+			add_meta_box( 'wp_syndicate_meta_box_import_test', __( 'Import Test', WPSYND_DOMAIN ), array( $this, 'meta_box_wp_syndicate_import_test' ),'wp-syndicate');
+		}
 	}
 	
 	public function meta_box_wp_syndicate($post) {
@@ -97,6 +102,10 @@ class WP_SYNDICATE {
 </table>
 <?php
 	}
+
+	public function meta_box_wp_syndicate_import_test($post) {
+		submit_button( 'Save and Test Excute', 'primary', 'wp_syndicate_import_test_excute' );
+	}
 	
 	public function save_meta_box( $post_id ) {
 		if ( wp_is_post_revision( $post_id ) )
@@ -134,6 +143,13 @@ class WP_SYNDICATE {
 
 		if ( isset($_POST['wp_syndicate-basic-auth-pass']) )
 			update_post_meta( $post_id, 'wp_syndicate-basic-auth-pass', trim($_POST['wp_syndicate-basic-auth-pass']) );
+			
+		if ( isset($_POST['wp_syndicate_import_test_excute']) ) {
+			remove_action( 'save_post', array( $this, 'save_meta_box' ) );
+			$action = new WP_SYND_Action();
+			$action->import($post_id);
+			add_action( 'save_post', array( $this, 'save_meta_box' ) );
+		}
 	}
 }
 new WP_SYNDICATE();
