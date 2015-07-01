@@ -1,21 +1,21 @@
 <?php
 class WP_SYND_logger {
 	private static $instance;
-	
+
 	public static function get_instance() {
-		if ( isset( self::$instance ) )
-			return self::$instance;
-		
+		if ( isset( self::$instance ) ) {
+			return self::$instance; }
+
 		self::$instance = new WP_SYND_logger;
 		return self::$instance;
 	}
-	
+
 	private function __construct() {}
-	
+
 	public function success( $title, $msg ) {
 		return $this->create_log( 'success', $title, $msg );
 	}
-	
+
 	public function error( $title, $msg ) {
 		return $this->create_log( 'error', $title, $msg );
 	}
@@ -26,11 +26,11 @@ class WP_SYND_logger {
 					'post_content'  => $msg,
 					'post_author'   => 1,
 					'post_status'   => 'publish',
-					'post_type'     => 'wp-syndicate-log'
+					'post_type'     => 'wp-syndicate-log',
 				);
-		$post_id = wp_insert_post($args);
-		if($post_id) {
-   			wp_set_object_terms($post_id, $status, 'log-category', true );
+		$post_id = wp_insert_post( $args );
+		if ( $post_id ) {
+				wp_set_object_terms( $post_id, $status, 'log-category', true );
 		}
 
 		return $post_id;
@@ -47,7 +47,7 @@ class WP_SYND_Log_Operator {
 		add_action( $this->event, array( $this, 'delete_log' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'restrict_manage_posts' ) );
 	}
-	
+
 	public function init() {
 		$capabilities = array(
 		    'read_feed_log',
@@ -62,15 +62,15 @@ class WP_SYND_Log_Operator {
 			'delete_published_feed_logs',
 			'delete_others_feed_logs',
 			'edit_private_feed_logs',
-			'edit_published_feed_logs'
+			'edit_published_feed_logs',
 		);
 
 		$role = get_role( 'administrator' );
 		foreach ( $capabilities as $cap ) {
-    		$role->add_cap( $cap );
+			$role->add_cap( $cap );
 		}
-		register_post_type( 'wp-syndicate-log', 
-	    							array( 
+		register_post_type( 'wp-syndicate-log',
+			array(
 	    								'labels' => array( 'name' => __( 'Syndication Log', WPSYND_DOMAIN ) ),
 	    								'public' => true,
 	    								'publicly_queryable' => false,
@@ -80,22 +80,22 @@ class WP_SYND_Log_Operator {
 	    								'rewrite' => false,
 	    								'can_export' => true,
 	    								'capability_type' => 'feed_log',
-    									'capabilities'    => $capabilities,
-    									'map_meta_cap' => true,
-    									'exclude_from_search' => true
+										'capabilities'    => $capabilities,
+										'map_meta_cap' => true,
+										'exclude_from_search' => true,
 	    							));
 
-	    register_taxonomy(
-	        	'log-category',
-	        	'wp-syndicate-log', 
-	        	array(
-	        		'label' => __( 'status', WPSYND_DOMAIN ),
-	        		'public' => false,
-	        		'query_var' => false,
-	        		'show_ui' => true,
-	        		'hierarchical' => true,
-	        		'show_admin_column' => true,
-	        	));
+									register_taxonomy(
+										'log-category',
+										'wp-syndicate-log',
+										array(
+										'label' => __( 'status', WPSYND_DOMAIN ),
+										'public' => false,
+										'query_var' => false,
+										'show_ui' => true,
+										'hierarchical' => true,
+										'show_admin_column' => true,
+										));
 	}
 
 	public function set_event() {
@@ -104,23 +104,23 @@ class WP_SYND_Log_Operator {
 		wp_schedule_event( $action_time, $this->key, $this->event );
 		spawn_cron( $action_time );
 	}
-	
+
 	public function delete_event() {
 		wp_clear_scheduled_hook( $this->event );
 	}
-	
+
 	public function delete_log() {
 		global $wpdb;
 		$options = get_option( 'wp_syndicate_options', 14 );
 		$term_day = $options['delete_log_term'] != '' ? $options['delete_log_term'] : 7;
-		$term = "-" . $term_day . " day";
-		$date = date_i18n( 'Y/m/d H:i:s', strtotime($term) );
-		
+		$term = '-' . $term_day . ' day';
+		$date = date_i18n( 'Y/m/d H:i:s', strtotime( $term ) );
+
 		$results = $wpdb->get_results($wpdb->prepare(
 			'SELECT ID FROM '. $wpdb->posts. ' WHERE post_type="wp-syndicate-log" AND post_status="publish" AND post_date<%s',
-			$date ));
-			
-		if ($results) {
+		$date ));
+
+		if ( $results ) {
 			foreach ( $results as $result ) {
 				wp_delete_post( $result->ID, true );
 			}
@@ -130,12 +130,12 @@ class WP_SYND_Log_Operator {
 	public function restrict_manage_posts() {
 		global $post_type;
 		if ( is_object_in_taxonomy( $post_type, 'log-category' ) ) {
-			$terms = get_terms('log-category');
-			$get = isset($_GET['term']) ? $_GET['term'] : '';
+			$terms = get_terms( 'log-category' );
+			$get = isset( $_GET['term'] ) ? $_GET['term'] : '';
 	?>
 		<select name="term">
 			<option value="0"></option>
-			<?php foreach( $terms as $term ) : ?>
+			<?php foreach ( $terms as $term ) : ?>
 			<option <?php selected( $get, $term->slug ); ?> value="<?php echo $term->slug; ?>"><?php echo $term->name; ?></option>
 			<?php endforeach; ?>
 		</select>
