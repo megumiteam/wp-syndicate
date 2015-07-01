@@ -38,11 +38,12 @@ class WP_SYND_Action {
 
 			if ( !wp_next_scheduled( $hook, array( $post->ID ) ) ) {
 				$this->set_event($post->ID);
-				$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'WP Cron Error', WPSYND_DOMAIN );
+				$subject = '(' . get_the_title($post->ID) . ')' . __( 'WP Cron Error', WPSYND_DOMAIN );
 				$msg  = sprintf( __( '%s of WP Cron restart, because it stopped.', WPSYND_DOMAIN ), $hook ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 				$msg .= admin_url();
 				WP_SYND_logger::get_instance()->error( $subject, $msg );
 				$options = get_option( 'wp_syndicate_options' );
+				$subject = '[' . get_bloginfo( 'name' ) . ']' . $subject;
 				wp_mail( $options['error_mail'], $subject, $msg );
 			}
 		}
@@ -117,13 +118,14 @@ class WP_SYND_Action {
 		$rss = fetch_feed( $feed_url );
 		remove_filter( 'wp_feed_cache_transient_lifetime' , array( $this, 'return_0' ) );
 		if ( is_wp_error( $rss ) ) {
-			$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'feed import failed', WPSYND_DOMAIN );
+			$subject = '(' . get_the_title($post->ID) . ')' . __( 'feed import failed', WPSYND_DOMAIN );
 			$msg  = sprintf( __( 'An error occurred at a feed retrieval of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 			$msg .= __( 'below error message', WPSYND_DOMAIN ) . "\n";
 			$msg .= $rss->get_error_message()."\n\n";
 			$msg .= __( 'feed URL', WPSYND_DOMAIN ) . ':' . $feed_url;
 			$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
 			$msg .= admin_url('/post.php?post=' . $error_post_id . '&action=edit');
+			$subject = '[' . get_bloginfo( 'name' ) . ']' . $subject;
 			wp_mail( $options['error_mail'], $subject, $msg );
 			return;
 		}
@@ -211,20 +213,22 @@ class WP_SYND_Action {
 		} 
 		
 		if ( $flg ) {
-			$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'feed import success', WPSYND_DOMAIN );
+			$subject = '(' . get_the_title($post->ID) . ')' . __( 'feed import success', WPSYND_DOMAIN );
 			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
 			$msg .= sprintf( __( 'Feed acquisition completion of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n" . __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 			$msg .= __( 'below ID data updates', WPSYND_DOMAIN ) . "\n";
 			$msg .= implode( "\n", $post_ids );
+			
 			WP_SYND_logger::get_instance()->success( $subject, $msg );
 		} else {
-			$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'feed import failed', WPSYND_DOMAIN );
+			$subject = '(' . get_the_title($post->ID) . ')' . __( 'feed import failed', WPSYND_DOMAIN );
 			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
 			$msg .= sprintf( __( 'Failed to some data registration of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n('Y/m/d:H:i:s') . "\n\n\n";
 			$msg .= __( 'below ID data updates', WPSYND_DOMAIN ) . "\n";
 			$msg .= implode( "\n", $post_ids );
 			$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
 			$msg .= admin_url('/post.php?post=' . $error_post_id . '&action=edit');
+			$subject = '[' . get_bloginfo( 'name' ) . ']' . $subject;
 			wp_mail( $options['error_mail'], $subject, $msg );
 		}
 		
