@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/horike37/WP-Syndicate.svg?branch=master)](https://travis-ci.org/horike37/WP-Syndicate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/horike37/WP-Syndicate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/horike37/WP-Syndicate/?branch=master)
+[![Build Status](https://travis-ci.org/horike37/wp-syndicate.svg?branch=master)](https://travis-ci.org/horike37/wp-syndicate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/horike37/WP-Syndicate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/horike37/WP-Syndicate/?branch=master)
 #WP-Syndicate
 * Contributors: horike,megumithemes
 * Tags:feed, rss
