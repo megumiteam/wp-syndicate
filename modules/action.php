@@ -235,7 +235,8 @@ class WP_SYND_Action {
 	}
 
 	public function return_0( $seconds ) {
-		return 0;
+		$seconds = 0;
+		return $seconds;
 	}
 
 	public function update_link( $matches ) {

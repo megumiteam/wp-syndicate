@@ -49,6 +49,7 @@ function wp_syndicate_setting_delete_log_term() {
 }
 
 function wp_syndicate_options_validate( $input ) {
+	$newinput = array();
 	$newinput['error_mail'] = trim( $input['error_mail'] );
 	$newinput['delete_log_term'] = absint( $input['delete_log_term'] );
 	return $newinput;

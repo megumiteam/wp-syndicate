@@ -53,7 +53,7 @@ class WP_SYNDICATE {
 		}
 	}
 	
-	public function meta_box_wp_syndicate($post) {
+	public function meta_box_wp_syndicate() {
 		echo wp_nonce_field('wp_syndicate_meta_box', 'wp_syndicate_meta_box_nonce');
 		
 		$feed_url = get_post_meta( get_the_ID(), 'wp_syndicate-feed-url', true );
