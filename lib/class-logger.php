@@ -13,22 +13,14 @@ class WP_SYND_logger {
 	private function __construct() {}
 	
 	public function success( $title, $msg ) {
-		$args = array(
-					'post_title'    => $title,
-					'post_content'  => $msg,
-					'post_author'   => 1,
-					'post_status'   => 'publish',
-					'post_type'     => 'wp-syndicate-log'
-				);
-		$post_id = wp_insert_post($args);
-		if($post_id) {
-   			wp_set_object_terms($post_id, 'success', 'log-category', true );
-		}
-		
-		return $post_id;
+		return $this->create_log( 'success', $title, $msg );
 	}
 	
 	public function error( $title, $msg ) {
+		return $this->create_log( 'error', $title, $msg );
+	}
+
+	private function create_log( $status, $title, $msg ) {
 		$args = array(
 					'post_title'    => $title,
 					'post_content'  => $msg,
@@ -38,7 +30,7 @@ class WP_SYND_logger {
 				);
 		$post_id = wp_insert_post($args);
 		if($post_id) {
-   			wp_set_object_terms($post_id, 'error', 'log-category', true );
+   			wp_set_object_terms($post_id, $status, 'log-category', true );
 		}
 
 		return $post_id;
@@ -53,7 +45,6 @@ class WP_SYND_Log_Operator {
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
 		add_action( $this->event, array( $this, 'delete_log' ) );
-		add_filter( 'manage_posts_columns', array( $this, 'manage_posts_columns' ) );
 		add_action( 'restrict_manage_posts', array( $this, 'restrict_manage_posts' ) );
 	}
 	
@@ -103,6 +94,7 @@ class WP_SYND_Log_Operator {
 	        		'query_var' => false,
 	        		'show_ui' => true,
 	        		'hierarchical' => true,
+	        		'show_admin_column' => true,
 	        	));
 	}
 
@@ -132,32 +124,6 @@ class WP_SYND_Log_Operator {
 			foreach ( $results as $result ) {
 				wp_delete_post( $result->ID, true );
 			}
-		}
-	}
-
-	public function manage_posts_columns( $posts_columns ) {
-		global $post_type;
-		if ( !is_object_in_taxonomy( $post_type, 'log-category' ) )
-			return $posts_columns;
-
-		$new_columns = array();
-		foreach ( $posts_columns as $column_name => $column_display_name ) {
-			if ( $column_name == 'categories' ) {
-				$new_columns['status'] = __( 'status', WPSYND_DOMAIN );
-				add_action( 'manage_posts_custom_column', array( $this, 'add_column' ), 10, 2 );
-			}
-			$new_columns[$column_name] = $column_display_name;
-		}
-		return $new_columns;
-	}
-
-	public function add_column($column_name, $post_id) {
-		$post_id = (int)$post_id;
-
-		if ( $column_name == 'status') {
-			$term = array_shift(get_the_terms($post->ID, 'log-category'));
-			if ( $term )
-    			echo esc_html($term->name);
 		}
 	}
 
