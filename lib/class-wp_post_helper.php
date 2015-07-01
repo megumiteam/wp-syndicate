@@ -33,6 +33,7 @@ class wp_post_helper {
 	public $post;
 
 	private $postid = false;
+	private $post_id = false;
 	private $attachment_id = array();
 
 	private $tags   = array();	
@@ -42,7 +43,7 @@ class wp_post_helper {
 	private $media_count = 0;
 	private $terms  = array();
 
-	function __construct($args = array()){
+	public function __construct($args = array()){
 		$this->init($args);
 	}
 
