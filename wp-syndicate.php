@@ -21,7 +21,7 @@ if ( ! defined( 'WPSYND_PLUGIN_DIR' ) ) {
 
 load_plugin_textdomain( WPSYND_DOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
-require_once( dirname( __FILE__ ) . '/lib/class-wp_post_helper.php' );
+require_once( dirname( __FILE__ ) . '/lib/class-wp-post-helper.php' );
 require_once( dirname( __FILE__ ) . '/lib/class-logger.php' );
 $portal_db_log_operator = new WP_SYND_Log_Operator();
 register_activation_hook( __FILE__, array( $portal_db_log_operator, 'set_event' ) );

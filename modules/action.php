@@ -20,7 +20,8 @@ class WP_SYND_Action {
 		$posts = get_posts( $this->args );
 
 		if ( empty( $posts ) ) {
-			return; }
+			return;
+		}
 
 		foreach ( $posts as $post ) {
 			add_action( 'wp_syndicate_' . $post->post_name . '_import', array( $this, 'import' ) );
@@ -39,11 +40,11 @@ class WP_SYND_Action {
 			if ( ! wp_next_scheduled( $hook, array( $post->ID ) ) ) {
 				$this->set_event( $post->ID );
 				$subject = '(' . get_the_title( $post->ID ) . ')' . __( 'WP Cron Error', WPSYND_DOMAIN );
-				$msg  = sprintf( __( '%s of WP Cron restart, because it stopped.', WPSYND_DOMAIN ), $hook ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n";
-				$msg .= admin_url();
+				$msg  = sprintf( __( '%s of WP Cron restart, because it stopped.', WPSYND_DOMAIN ), $hook ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n" . admin_url();
 				WP_SYND_logger::get_instance()->error( $subject, $msg );
-				$options = get_option( 'wp_syndicate_options' );
+
 				$subject = '[' . get_bloginfo( 'name' ) . ']' . $subject;
+				$options = get_option( 'wp_syndicate_options' );
 				wp_mail( $options['error_mail'], $subject, $msg );
 			}
 		}
@@ -63,29 +64,30 @@ class WP_SYND_Action {
 			$display = get_the_title( $post->ID );
 			$schedules[ $key ] = array( 'interval' => $interval, 'display' => $display );
 		}
-
 		return $schedules;
 	}
 
 	public function set_event($post_id) {
 
 		if ( wp_is_post_revision( $post_id ) ) {
-			return; }
+			return;
+		}
 
 		if ( 'wp-syndicate' !== get_post_type( $post_id ) ) {
-			return; }
+			return;
+		}
 
 		$post = get_post( $post_id );
 		if ( ! is_object( $post ) ) {
-			return; }
+			return;
+		}
 
-		$key = $post->post_name;
 		$interval_min = get_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', true );
 		$interval = intval( $interval_min ) * 60;
 		$action_time = time() + $interval;
 
-		$hook = 'wp_syndicate_' . $key . '_import';
-		$event = 'wp_syndicate_' . $key;
+		$hook = 'wp_syndicate_' . $post->post_name . '_import';
+		$event = 'wp_syndicate_' . $post->post_name;
 
 		if ( wp_next_scheduled( $hook, array( $post_id ) ) ) {
 			wp_clear_scheduled_hook( $hook, array( $post_id ) ); }
@@ -119,10 +121,7 @@ class WP_SYND_Action {
 		remove_filter( 'wp_feed_cache_transient_lifetime' , array( $this, 'return_0' ) );
 		if ( is_wp_error( $rss ) ) {
 			$subject = '(' . get_the_title( $post->ID ) . ')' . __( 'feed import failed', WPSYND_DOMAIN );
-			$msg  = sprintf( __( 'An error occurred at a feed retrieval of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n";
-			$msg .= __( 'below error message', WPSYND_DOMAIN ) . "\n";
-			$msg .= $rss->get_error_message()."\n\n";
-			$msg .= __( 'feed URL', WPSYND_DOMAIN ) . ':' . $feed_url;
+			$msg  = sprintf( __( 'An error occurred at a feed retrieval of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n" . __( 'below error message', WPSYND_DOMAIN ) . "\n" . $rss->get_error_message()."\n\n" . __( 'feed URL', WPSYND_DOMAIN ) . ':' . $feed_url;
 			$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
 			$msg .= admin_url( '/post.php?post=' . $error_post_id . '&action=edit' );
 			$subject = '[' . get_bloginfo( 'name' ) . ']' . $subject;
@@ -160,7 +159,7 @@ class WP_SYND_Action {
 								'ID' => $set_post_id,
 								'post_name' => $slug,
 								'post_date' => apply_filters( 'wp_syndicate_get_date', $item->get_date( 'Y/m/d H:i:s' ), $post_id ),
-									'post_title' => apply_filters( 'wp_syndicate_get_title', $item->get_title(), $post_id ),
+								'post_title' => apply_filters( 'wp_syndicate_get_title', $item->get_title(), $post_id ),
 								'post_content' => '',
 							);
 			if ( ! $updated ) {
@@ -168,7 +167,7 @@ class WP_SYND_Action {
 				$post_args['post_status'] = get_post_meta( $post_id, 'wp_syndicate-default-post-status', true );
 				$post_args['post_type'] = get_post_meta( $post_id, 'wp_syndicate-default-post-type', true );
 			}
-			$this->post = new wp_post_helper( $post_args );
+			$this->post = new WP_Post_Helper( $post_args );
 
 			// 画像の登録
 			if ( $updated ) {
@@ -207,18 +206,11 @@ class WP_SYND_Action {
 
 		if ( $flg ) {
 			$subject = '(' . get_the_title( $post->ID ) . ')' . __( 'feed import success', WPSYND_DOMAIN );
-			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
-			$msg .= sprintf( __( 'Feed acquisition completion of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n" . __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n";
-			$msg .= __( 'below ID data updates', WPSYND_DOMAIN ) . "\n";
-			$msg .= implode( "\n", $post_ids );
-
+			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n" . sprintf( __( 'Feed acquisition completion of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n" . __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n" . __( 'below ID data updates', WPSYND_DOMAIN ) . "\n" . implode( "\n", $post_ids );
 			WP_SYND_logger::get_instance()->success( $subject, $msg );
 		} else {
 			$subject = '(' . get_the_title( $post->ID ) . ')' . __( 'feed import failed', WPSYND_DOMAIN );
-			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
-			$msg .= sprintf( __( 'Failed to some data registration of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n";
-			$msg .= __( 'below ID data updates', WPSYND_DOMAIN ) . "\n";
-			$msg .= implode( "\n", $post_ids );
+			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n" . sprintf( __( 'Failed to some data registration of %s', WPSYND_DOMAIN ), $post->post_name ) . "\n". __( 'action time', WPSYND_DOMAIN ). ':' . date_i18n( 'Y/m/d:H:i:s' ) . "\n\n\n" . __( 'below ID data updates', WPSYND_DOMAIN ) . "\n" . implode( "\n", $post_ids );
 			$error_post_id = WP_SYND_logger::get_instance()->error( $subject, $msg );
 			$msg .= admin_url( '/post.php?post=' . $error_post_id . '&action=edit' );
 			$subject = '[' . get_bloginfo( 'name' ) . ']' . $subject;
@@ -234,7 +226,7 @@ class WP_SYND_Action {
 
 	public function update_link( $matches ) {
 
-		if ( is_array( $matches ) && array_key_exists( 2, $matches ) && isset( $this->post ) && is_object( $this->post ) && is_a( $this->post, 'wp_post_helper' ) ) {
+		if ( is_array( $matches ) && array_key_exists( 2, $matches ) && isset( $this->post ) && is_object( $this->post ) && is_a( $this->post, 'WP_Post_Helper' ) ) {
 			$args    = array();
 			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );
@@ -272,7 +264,7 @@ class WP_SYND_Action {
 	}
 
 	public function set_enclosure($link) {
-		if ( ! empty( $link ) && is_object( $this->post ) && is_a( $this->post, 'wp_post_helper' ) ) {
+		if ( ! empty( $link ) && is_object( $this->post ) && is_a( $this->post, 'WP_Post_Helper' ) ) {
 			$args    = array();
 			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
 			$pass    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-pass', true );

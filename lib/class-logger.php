@@ -29,9 +29,7 @@ class WP_SYND_logger {
 					'post_type'     => 'wp-syndicate-log',
 				);
 		$post_id = wp_insert_post( $args );
-		if ( $post_id ) {
-				wp_set_object_terms( $post_id, $status, 'log-category', true );
-		}
+		$post_id && wp_set_object_terms( $post_id, $status, 'log-category', true );
 
 		return $post_id;
 	}
@@ -50,7 +48,7 @@ class WP_SYND_Log_Operator {
 
 	public function init() {
 		$capabilities = array(
-		    'read_feed_log',
+			'read_feed_log',
 			'edit_feed_log',
 			'delete_feed_log',
 			'edit_feed_logs',
@@ -71,19 +69,19 @@ class WP_SYND_Log_Operator {
 		}
 		register_post_type( 'wp-syndicate-log',
 			array(
-	    								'labels' => array( 'name' => __( 'Syndication Log', WPSYND_DOMAIN ) ),
-	    								'public' => true,
-	    								'publicly_queryable' => false,
+										'labels' => array( 'name' => __( 'Syndication Log', WPSYND_DOMAIN ) ),
+										'public' => true,
+										'publicly_queryable' => false,
 										'has_archive' => false,
-	    								'hierarchical' => false,
-	    								'supports' => array( 'title', 'editor' ),
-	    								'rewrite' => false,
-	    								'can_export' => true,
-	    								'capability_type' => 'feed_log',
+										'hierarchical' => false,
+										'supports' => array( 'title', 'editor' ),
+										'rewrite' => false,
+										'can_export' => true,
+										'capability_type' => 'feed_log',
 										'capabilities'    => $capabilities,
 										'map_meta_cap' => true,
 										'exclude_from_search' => true,
-	    							));
+									));
 
 									register_taxonomy(
 										'log-category',
@@ -110,21 +108,30 @@ class WP_SYND_Log_Operator {
 	}
 
 	public function delete_log() {
-		global $wpdb;
-		$options = get_option( 'wp_syndicate_options', 14 );
-		$term_day = $options['delete_log_term'] != '' ? $options['delete_log_term'] : 7;
-		$term = '-' . $term_day . ' day';
-		$date = date_i18n( 'Y/m/d H:i:s', strtotime( $term ) );
+		$args = array(
+				'posts_per_page'   => 1000,
+				'post_type'        => 'wp-syndicate-log',
+				'suppress_filters' => false,
+		);
 
-		$results = $wpdb->get_results($wpdb->prepare(
-			'SELECT ID FROM '. $wpdb->posts. ' WHERE post_type="wp-syndicate-log" AND post_status="publish" AND post_date<%s',
-		$date ));
+		add_filter( 'post_where', array( $this, 'post_where' ) );
+		$results = get_posts( $args );
+		remove_filter( 'post_where', array( $this, 'post_where' ) );
 
-		if ( $results ) {
+		if ( ! empty( $results ) && is_array( $results ) ) {
 			foreach ( $results as $result ) {
 				wp_delete_post( $result->ID, true );
 			}
 		}
+	}
+
+	public function post_where($where) {
+		$options = get_option( 'wp_syndicate_options', 14 );
+		$term_day = ! empty( $options['delete_log_term'] ) ? $options['delete_log_term'] : 7;
+		$date = date_i18n( 'Y/m/d H:i:s', strtotime( '-' . $term_day . ' day' ) );
+
+		$where .= " AND post_date < '" . $date . "'";
+		return $where;
 	}
 
 	public function restrict_manage_posts() {
@@ -132,15 +139,15 @@ class WP_SYND_Log_Operator {
 		if ( is_object_in_taxonomy( $post_type, 'log-category' ) ) {
 			$terms = get_terms( 'log-category' );
 			$get = isset( $_GET['term'] ) ? $_GET['term'] : '';
-	?>
-		<select name="term">
-			<option value="0"></option>
-			<?php foreach ( $terms as $term ) : ?>
-			<option <?php selected( $get, $term->slug ); ?> value="<?php echo $term->slug; ?>"><?php echo $term->name; ?></option>
-			<?php endforeach; ?>
-		</select>
-		<input type="hidden" name="taxonomy" value="log-category" />
-	<?php
+?>
+<select name="term">
+	<option value="0"></option>
+	<?php foreach ( $terms as $term ) : ?>
+		<option <?php selected( $get, $term->slug ); ?> value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option>
+	<?php endforeach; ?>
+</select>
+<input type="hidden" name="taxonomy" value="log-category" />
+<?php
 		}
 	}
 }

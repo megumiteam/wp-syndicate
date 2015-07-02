@@ -54,7 +54,7 @@ class WP_SYNDICATE {
 	}
 
 	public function meta_box_wp_syndicate() {
-		echo wp_nonce_field( 'wp_syndicate_meta_box', 'wp_syndicate_meta_box_nonce' );
+		wp_nonce_field( 'wp_syndicate_meta_box', 'wp_syndicate_meta_box_nonce' );
 
 		$feed_url = get_post_meta( get_the_ID(), 'wp_syndicate-feed-url', true );
 		$feed_retrieve_term = get_post_meta( get_the_ID(), 'wp_syndicate-feed-retrieve-term', true );
@@ -70,34 +70,34 @@ class WP_SYNDICATE {
 
 ?>
 <table class="form-table">
-<tr><th><?php _e( 'feed URL', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-feed-url" size="40" value="<?php echo esc_attr( $feed_url ); ?>" /></td></tr>
-<tr><th><?php _e( 'feed retrieve term', WPSYND_DOMAIN ) ?></th><td><input type="number" step="1" min="1" max="999" name="wp_syndicate-feed-retrieve-term" size="20" value="<?php echo esc_attr( $feed_retrieve_term ); ?>" /> <?php _e( 'min', WPSYND_DOMAIN ) ?></td></tr>
-<tr><th><?php _e( 'Author ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-author-id" size="7" value="<?php echo esc_attr( $author_id ); ?>" /></td></tr>
-<tr><th><?php _e( 'Default Post Type', WPSYND_DOMAIN ) ?></th>
+<tr><th><?php esc_html_e( 'feed URL', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-feed-url" size="40" value="<?php echo esc_attr( $feed_url ); ?>" /></td></tr>
+<tr><th><?php esc_html_e( 'feed retrieve term', WPSYND_DOMAIN ) ?></th><td><input type="number" step="1" min="1" max="999" name="wp_syndicate-feed-retrieve-term" size="20" value="<?php echo esc_attr( $feed_retrieve_term ); ?>" /> <?php esc_html_e( 'min', WPSYND_DOMAIN ) ?></td></tr>
+<tr><th><?php esc_html_e( 'Author ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-author-id" size="7" value="<?php echo esc_attr( $author_id ); ?>" /></td></tr>
+<tr><th><?php esc_html_e( 'Default Post Type', WPSYND_DOMAIN ) ?></th>
 <td>
 <select name="wp_syndicate-default-post-type">
 <?php foreach ( $post_types as $key => $val ) : ?>
-	<option <?php selected( $post_type, $key ); ?> value="<?php echo $key; ?>"><?php echo $val; ?></option>
+	<option <?php selected( $post_type, $key ); ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_attr( $val ); ?></option>
 <?php endforeach; ?>
 </select>
 </td></tr>
-<tr><th><?php _e( 'Default Post Status', WPSYND_DOMAIN ) ?></th>
+<tr><th><?php esc_html_e( 'Default Post Status', WPSYND_DOMAIN ) ?></th>
 <td>
 <select name="wp_syndicate-default-post-status">
 <?php foreach ( $statuses as $key => $val ) : ?>
-	<option <?php selected( $status, $key ); ?> value="<?php echo $key; ?>"><?php echo $val; ?></option>
+	<option <?php selected( $status, $key ); ?> value="<?php echo esc_attr( $key ); ?>"><?php echo esc_attr( $val ); ?></option>
 <?php endforeach; ?>
 </select>
 </td></tr>
-<tr><th><?php _e( 'Registration method', WPSYND_DOMAIN ) ?></th>
+<tr><th><?php esc_html_e( 'Registration method', WPSYND_DOMAIN ) ?></th>
 <td>
 <select name="wp_syndicate-registration-method">
 	<option <?php selected( $registration_method, 'insert' ); ?> value="insert">insert only</option>
 	<option <?php selected( $registration_method, 'insert-or-update' ); ?> value="insert-or-update">insert or update</option>
 </select>
 </td></tr>
-<tr><th><?php _e( 'Basic Auth User ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-basic-auth-user" size="40" value="<?php echo esc_attr( $user_id ); ?>" /></td></tr>
-<tr><th><?php _e( 'Basic Auth Password', WPSYND_DOMAIN ) ?></th><td><input type="password" name="wp_syndicate-basic-auth-pass" size="40" value="<?php echo esc_attr( $password ); ?>" /></td></tr>
+<tr><th><?php esc_html_e( 'Basic Auth User ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-basic-auth-user" size="40" value="<?php echo esc_attr( $user_id ); ?>" /></td></tr>
+<tr><th><?php esc_html_e( 'Basic Auth Password', WPSYND_DOMAIN ) ?></th><td><input type="password" name="wp_syndicate-basic-auth-pass" size="40" value="<?php echo esc_attr( $password ); ?>" /></td></tr>
 
 </table>
 <?php

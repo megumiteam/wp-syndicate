@@ -14,7 +14,7 @@ function wp_syndicate_options_page() {
 <?php settings_fields( 'wp_syndicate_options' ); ?>
 <?php do_settings_sections( 'wp_syndicate' ); ?>
 
-<p class="submit"><input name="Submit" type="submit" value="<?php _e( 'save' ); ?>" class="button-primary" /></p>
+<p class="submit"><input name="Submit" type="submit" value="<?php esc_attr_e( 'save' ); ?>" class="button-primary" /></p>
 </form>
 
 </div>
@@ -45,7 +45,7 @@ function wp_syndicate_setting_error_mail() {
 function wp_syndicate_setting_delete_log_term() {
 	$options = get_option( 'wp_syndicate_options' );
 
-	echo '<input id="wp_syndicate_delete_log_term" name="wp_syndicate_options[delete_log_term]" size="5" type="text" value="' . esc_attr( $options['delete_log_term'] ) . '" /> ' . __( 'day', WPSYND_DOMAIN );
+	echo '<input id="wp_syndicate_delete_log_term" name="wp_syndicate_options[delete_log_term]" size="5" type="text" value="' . esc_attr( $options['delete_log_term'] ) . '" /> ' . esc_html( __( 'day', WPSYND_DOMAIN ) );
 }
 
 function wp_syndicate_options_validate( $input ) {

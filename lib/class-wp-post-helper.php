@@ -29,7 +29,7 @@ if ( defined( 'ABSPATH' ) ) :
 	require_once( ABSPATH . 'wp-admin/includes/image.php' );
 	require_once( ABSPATH . 'wp-admin/includes/post.php' );
 
-	class wp_post_helper {
+	class WP_Post_Helper {
 		public $post;
 
 		private $postid = false;
@@ -107,8 +107,8 @@ if ( defined( 'ABSPATH' ) ) :
 
 			$post = $this->post;
 			foreach ( $post as $key => &$val ) {
-				if ( $key !== 'ID' && isset( $args[$key] ) ) {
-					$val = $args[$key];
+				if ( 'ID' !== $key && isset( $args[ $key ] ) ) {
+					$val = $args[ $key ];
 				}
 			}
 			$this->post = $post;
@@ -221,11 +221,11 @@ if ( defined( 'ABSPATH' ) ) :
 		// add terms
 		public function add_terms($taxonomy, $terms) {
 			if ( ! $this->postid ) {
-				if ( ! isset( $this->terms[$taxonomy] ) ) {
-					$this->terms[$taxonomy] = array(); }
+				if ( ! isset( $this->terms[ $taxonomy ] ) ) {
+					$this->terms[ $taxonomy ] = array(); }
 				foreach ( (array) $terms as $term ) {
-					if ( array_search( $term, $this->terms[$taxonomy] ) === false ) {
-						$this->terms[$taxonomy][] = $term; }
+					if ( array_search( $term, $this->terms[ $taxonomy ] ) === false ) {
+						$this->terms[ $taxonomy ][] = $term; }
 				}
 			} else {
 				return wp_set_object_terms( $this->postid, $terms, $taxonomy );
@@ -235,7 +235,7 @@ if ( defined( 'ABSPATH' ) ) :
 		// Add Media
 		public function add_media($filename, $title = null, $content = null, $excerpt = null, $thumbnail = false) {
 			if ( ! $this->postid ) {
-				$this->medias[$filename] = array(
+				$this->medias[ $filename ] = array(
 				$title,
 				$content,
 				$excerpt,
@@ -290,14 +290,14 @@ if ( defined( 'ABSPATH' ) ) :
 		// Add Custom Field
 		public function add_meta($metakey, $val, $unique = true) {
 			if ( ! $this->postid ) {
-				$this->metas[$metakey] = array( $val, $unique );
+				$this->metas[ $metakey ] = array( $val, $unique );
 			} else { 			return $val ? add_post_meta( $this->postid, $metakey, $val, $unique ) : false; }
 		}
 
 		// Add Advanced Custom Field
 		public function add_field($field_key, $val) {
 			if ( ! $this->postid ) {
-				$this->fields[$field_key] = $val;
+				$this->fields[ $field_key ] = $val;
 			} else { 			return $val ? update_field( $field_key, $val, $this->postid ) : false; }
 		}
 	}
@@ -331,7 +331,7 @@ if ( defined( 'ABSPATH' ) ) :
 
 		if ( ! file_exists( $photo ) ) {
 			$response = wp_remote_get( $url, $headers );
-			if ( ! is_wp_error( $response ) && $response['response']['code'] === 200 ) {
+			if ( ! is_wp_error( $response ) && 200 === $response['response']['code'] ) {
 				$photo_data = $response['body'];
 				file_put_contents( $photo, $photo_data );
 				unset( $photo_data );
