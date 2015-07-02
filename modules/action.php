@@ -2,7 +2,7 @@
 class WP_SYND_Action {
 	private $args = array(
 					'post_type' => 'wp-syndicate',
-					'posts_per_page' => -1,
+					'posts_per_page' => 50,
 					'post_status' => 'publish',
 				);
 	private $post;
@@ -61,7 +61,7 @@ class WP_SYND_Action {
 			$interval_min = get_post_meta( $post->ID, 'wp_syndicate-feed-retrieve-term', true );
 			$interval = intval( $interval_min ) * 60;
 			$display = get_the_title( $post->ID );
-			$schedules[$key] = array( 'interval' => $interval, 'display' => $display );
+			$schedules[ $key ] = array( 'interval' => $interval, 'display' => $display );
 		}
 
 		return $schedules;
@@ -72,7 +72,7 @@ class WP_SYND_Action {
 		if ( wp_is_post_revision( $post_id ) ) {
 			return; }
 
-		if ( 'wp-syndicate' != get_post_type( $post_id ) ) {
+		if ( 'wp-syndicate' !== get_post_type( $post_id ) ) {
 			return; }
 
 		$post = get_post( $post_id );
@@ -144,16 +144,9 @@ class WP_SYND_Action {
 			// 投稿ID取得
 			$slug = $post->post_name . '_' . $item->get_id();
 			$set_post = get_page_by_path( sanitize_title( $slug ), OBJECT, $post_type );
-			$set_post_id = $set_post == null ? '' : $set_post->ID;
+			$set_post_id = null === $set_post ? '' : $set_post->ID;
 
-			if ( empty( $set_post_id ) ) {
-				global $wpdb;
-				$db_ret = $wpdb->get_row( $wpdb->prepare( "SELECT count(1) as cnt FROM $wpdb->postmeta WHERE meta_key='%s'", $slug ) );
-				if ( $db_ret === null || $db_ret->cnt !== '0' ) {
-					continue; }
-			}
-
-			if ( $registration_method == 'insert' && is_object( $set_post ) ) {
+			if ( 'insert' === $registration_method && is_object( $set_post ) ) {
 				continue;
 			}
 
@@ -263,7 +256,7 @@ class WP_SYND_Action {
 				$url = preg_split( '/wp-content/', $media );
 				$url = home_url( 'wp-content' . $url[1] );
 
-				if ( $url == $this->enclosure_url ) {
+				if ( $url === $this->enclosure_url ) {
 					$thumnail_flg = true;
 				}
 

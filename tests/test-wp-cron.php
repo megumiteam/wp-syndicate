@@ -40,7 +40,7 @@ class WP_Syndicate_WP_Cron_Test extends WP_UnitTestCase {
 		$this->assertEquals( false, $event );
 	}
 
-	function create_data( $key, $feed, $post_status = 'publish', $post_type = 'post', $mode = 'insert', $user_id =1 ) {
+	function create_data( $key, $feed, $post_status = 'publish', $post_type = 'post', $mode = 'insert', $user_id = 1 ) {
 		$post_id = $this->factory->post->create( array( 'post_type' => 'wp-syndicate', 'post_name' => $key ) );
 		add_post_meta( $post_id, 'wp_syndicate-feed-url', $feed );
 		add_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', 5 );

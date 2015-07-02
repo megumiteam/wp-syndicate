@@ -1,0 +1,15 @@
+{
+  "name": "wp-syndicate",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/horike37/wp-syndicate.git"
+  },
+  "main": "Gruntfile.js",
+  "author": "Takahiro Horike",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-phpcs": "^0.4.0",
+    "phplint": "^1.2.0"
+  }
+}

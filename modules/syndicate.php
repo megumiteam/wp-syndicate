@@ -48,7 +48,7 @@ class WP_SYNDICATE {
 		global $hook_suffix;
 
 		add_meta_box( 'wp_syndicate_meta_box', __( 'configuration', WPSYND_DOMAIN ), array( $this, 'meta_box_wp_syndicate' ),'wp-syndicate' );
-		if ( $hook_suffix == 'post.php' ) {
+		if ( 'post.php' === $hook_suffix ) {
 			add_meta_box( 'wp_syndicate_meta_box_import_test', __( 'Import Test', WPSYND_DOMAIN ), array( $this, 'meta_box_wp_syndicate_import_test' ),'wp-syndicate' );
 		}
 	}
@@ -111,7 +111,7 @@ class WP_SYNDICATE {
 		if ( wp_is_post_revision( $post_id ) ) {
 			return; }
 
-		if ( get_post_type() != 'wp-syndicate' ) {
+		if ( get_post_type() !== 'wp-syndicate' ) {
 			return; }
 
 		if ( ! current_user_can( 'edit_wp_syndicate', $post_id ) ) {
