@@ -108,41 +108,19 @@ class WP_SYNDICATE {
 	}
 
 	public function save_meta_box( $post_id ) {
-		if ( wp_is_post_revision( $post_id ) ) {
-			return; }
+		if ( wp_is_post_revision( $post_id ) || get_post_type() !== 'wp-syndicate' || ! current_user_can( 'edit_wp_syndicate', $post_id )
+				|| ! isset( $_POST['wp_syndicate_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_syndicate_meta_box_nonce'], 'wp_syndicate_meta_box' ) ) {
+			return;
+		}
 
-		if ( get_post_type() !== 'wp-syndicate' ) {
-			return; }
-
-		if ( ! current_user_can( 'edit_wp_syndicate', $post_id ) ) {
-			return; }
-
-		if ( ! isset( $_POST['wp_syndicate_meta_box_nonce'] ) || ! wp_verify_nonce( $_POST['wp_syndicate_meta_box_nonce'], 'wp_syndicate_meta_box' ) ) {
-			return; }
-
-		if ( isset( $_POST['wp_syndicate-feed-url'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-feed-url', esc_url( $_POST['wp_syndicate-feed-url'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-feed-retrieve-term'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', absint( $_POST['wp_syndicate-feed-retrieve-term'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-author-id'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-author-id', absint( $_POST['wp_syndicate-author-id'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-default-post-status'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-default-post-status', trim( $_POST['wp_syndicate-default-post-status'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-default-post-type'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-default-post-type', trim( $_POST['wp_syndicate-default-post-type'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-registration-method'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-registration-method', trim( $_POST['wp_syndicate-registration-method'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-basic-auth-user'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-basic-auth-user', trim( $_POST['wp_syndicate-basic-auth-user'] ) ); }
-
-		if ( isset( $_POST['wp_syndicate-basic-auth-pass'] ) ) {
-			update_post_meta( $post_id, 'wp_syndicate-basic-auth-pass', trim( $_POST['wp_syndicate-basic-auth-pass'] ) ); }
+		isset( $_POST['wp_syndicate-feed-url'] ) && update_post_meta( $post_id, 'wp_syndicate-feed-url', esc_url( $_POST['wp_syndicate-feed-url'] ) );
+		isset( $_POST['wp_syndicate-feed-retrieve-term'] ) && update_post_meta( $post_id, 'wp_syndicate-feed-retrieve-term', absint( $_POST['wp_syndicate-feed-retrieve-term'] ) );
+		isset( $_POST['wp_syndicate-author-id'] ) && update_post_meta( $post_id, 'wp_syndicate-author-id', absint( $_POST['wp_syndicate-author-id'] ) );
+		isset( $_POST['wp_syndicate-default-post-status'] ) && update_post_meta( $post_id, 'wp_syndicate-default-post-status', trim( $_POST['wp_syndicate-default-post-status'] ) );
+		isset( $_POST['wp_syndicate-default-post-type'] ) && update_post_meta( $post_id, 'wp_syndicate-default-post-type', trim( $_POST['wp_syndicate-default-post-type'] ) );
+		isset( $_POST['wp_syndicate-registration-method'] ) && update_post_meta( $post_id, 'wp_syndicate-registration-method', trim( $_POST['wp_syndicate-registration-method'] ) );
+		isset( $_POST['wp_syndicate-basic-auth-user'] ) && update_post_meta( $post_id, 'wp_syndicate-basic-auth-user', trim( $_POST['wp_syndicate-basic-auth-user'] ) );
+		isset( $_POST['wp_syndicate-basic-auth-pass'] ) && update_post_meta( $post_id, 'wp_syndicate-basic-auth-pass', trim( $_POST['wp_syndicate-basic-auth-pass'] ) );
 
 		if ( isset( $_POST['wp_syndicate_import_test_excute'] ) ) {
 			remove_action( 'save_post', array( $this, 'save_meta_box' ) );
