@@ -20,7 +20,6 @@ if ( ! defined( 'WPSYND_PLUGIN_DIR' ) ) {
 	define( 'WPSYND_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . dirname( plugin_basename( __FILE__ ) ) ); }
 
 load_plugin_textdomain( WPSYND_DOMAIN, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
 require_once( dirname( __FILE__ ) . '/lib/class-wp-post-helper.php' );
 require_once( dirname( __FILE__ ) . '/lib/class-logger.php' );
 $portal_db_log_operator = new WP_SYND_Log_Operator();
