@@ -18,4 +18,4 @@ script:
 - phpunit
 notifications:
   slack:
-    secure: AqhkKJbDU2krT7S46aX3cs+0mLEnXtWNHgynPuQX+x+PluOTEAvjCqZIr9hXTrf3lby3JTDa7+/S71v48I5O10VTdrnlaAjhR2P5VKQm+EMAuqyK09JLncbturi5K6ZuMu4AW5bWy3GBOUuRHxevrsYTJi4HRZ3u61eGiEcC9iA=
+    secure: Asxux6Npv5nDsTu3ZZCsyMbf6wXVn9ybsAZWm5WMvYyYWfdNwIEZg8j5BE5wL1NaPIpPT2OGwpQz61p/UukWRKaUZ3NSY4L2FNwPUt+NVxn+fEZqJ+TW9SaNlRi/9h49Kyks37O5Wjm+dlQMgNgD/2YdBWFq39djNPr+Qbjx6bg=
