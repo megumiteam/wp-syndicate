@@ -16,4 +16,4 @@ script:
 - bash bin/phpcs.sh
 - phpunit
 notifications:
-  slack:'horike37:qB5TWStLX7MngXqhOesPSnZm#dev'
+  slack: horike37:qB5TWStLX7MngXqhOesPSnZm
