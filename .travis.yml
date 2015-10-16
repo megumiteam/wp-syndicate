@@ -6,6 +6,7 @@ php:
 - hhvm
 env:
 - WP_VERSION=latest WP_MULTISITE=0
+- WP_VERSION=4.2 WP_MULTISITE=0
 - WP_VERSION=4.1 WP_MULTISITE=0
 before_script:
 - phpenv local 5.5
@@ -14,7 +15,6 @@ before_script:
 - npm install
 - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 script:
-- bash bin/phpcs.sh
 - phpunit
 notifications:
   slack:
