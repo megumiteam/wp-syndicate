@@ -4,7 +4,7 @@ php:
 - 5.5
 - hhvm
 env:
-- WP_VERSION=latest WP_MULTISITE=0
+- WP_VERSION=4.3 WP_MULTISITE=0
 - WP_VERSION=4.2 WP_MULTISITE=0
 - WP_VERSION=4.1 WP_MULTISITE=0
 before_script:
