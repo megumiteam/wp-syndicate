@@ -1,7 +1,7 @@
 === WP Syndicate ===
 Contributors: horike,megumithemes
 Tags:feed, rss
-Requires at least: 4.2
+Requires at least: 4.3
 Tested up to: 4.4.1
 Stable tag: 1.1.21
 
