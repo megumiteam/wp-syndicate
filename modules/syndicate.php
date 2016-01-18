@@ -37,6 +37,7 @@ class WP_SYNDICATE {
 	    								'supports' => array( 'title' ),
 	    								'rewrite' => false,
 	    								'can_export' => true,
+	    								'menu_position' => 28,
 	    								'capability_type' => 'wp_syndicate',
 										'capabilities'    => $capabilities,
 										'map_meta_cap' => true,

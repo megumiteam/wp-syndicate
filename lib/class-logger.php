@@ -77,6 +77,7 @@ class WP_SYND_Log_Operator {
 										'supports' => array( 'title', 'editor' ),
 										'rewrite' => false,
 										'can_export' => true,
+										'menu_position' => 27,
 										'capability_type' => 'feed_log',
 										'capabilities'    => $capabilities,
 										'map_meta_cap' => true,

@@ -4,7 +4,7 @@
  * Plugin URI: http://digitalcube.jp
  * Description: It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
  * Author: horike
- * Version: 1.1.20
+ * Version: 1.1.21
  * Author URI: http://digitalcube.jp
  * License: GPL2+
  * @package WordPress
