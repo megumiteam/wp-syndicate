@@ -1,21 +1,25 @@
 language: php
-php:
-- 5.4
-- 5.5
-- hhvm
-env:
-- WP_VERSION=4.3 WP_MULTISITE=0
-- WP_VERSION=4.2 WP_MULTISITE=0
-- WP_VERSION=4.1 WP_MULTISITE=0
-before_script:
-- phpenv local 5.5
-- composer install --dev --no-interaction
-- phpenv local --unset
-- npm install
-- bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-script:
-- bash bin/phpcs.sh
-- phpunit
+
 notifications:
-  slack:
-    secure: Asxux6Npv5nDsTu3ZZCsyMbf6wXVn9ybsAZWm5WMvYyYWfdNwIEZg8j5BE5wL1NaPIpPT2OGwpQz61p/UukWRKaUZ3NSY4L2FNwPUt+NVxn+fEZqJ+TW9SaNlRi/9h49Kyks37O5Wjm+dlQMgNgD/2YdBWFq39djNPr+Qbjx6bg=
+  email:
+    on_success: never
+    on_failure: change
+
+php:
+  - 5.3
+  - 5.6
+
+env:
+  - WP_VERSION=latest WP_MULTISITE=0
+  - WP_VERSION=4.3 WP_MULTISITE=0
+  - WP_VERSION=4.2 WP_MULTISITE=0
+
+matrix:
+  include:
+    - php: 5.3
+      env: WP_VERSION=latest WP_MULTISITE=1
+
+before_script:
+  - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
+
+script: phpunit

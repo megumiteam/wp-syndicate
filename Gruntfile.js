@@ -2,51 +2,52 @@ module.exports = function( grunt ) {
 
 	'use strict';
 	var banner = '/**\n * <%= pkg.homepage %>\n * Copyright (c) <%= grunt.template.today("yyyy") %>\n * This file is generated automatically. Do not edit.\n */\n';
-	require('phplint').gruntPlugin(grunt);
 	// Project configuration
 	grunt.initConfig( {
 
 		pkg: grunt.file.readJSON( 'package.json' ),
 
-		phpcs: {
-			plugin: {
-				src: './'
-			},
+		addtextdomain: {
 			options: {
-				bin: "vendor/bin/phpcs --extensions=php --ignore=\"*/vendor/*,*/node_modules/*\"",
-				standard: "phpcs.ruleset.xml"
+				textdomain: 'wp-syndicate',
+			},
+			target: {
+				files: {
+					src: [ '*.php', '**/*.php', '!node_modules/**', '!php-tests/**', '!bin/**' ]
+				}
 			}
 		},
 
-		phplint: {
-			options: {
-				limit: 10,
-				stdout: true,
-				stderr: true
-			},
-			files: ['lib/*.php', 'modules/*.php','tests/*.php', '*.php']
-		},
-
-		phpunit: {
-			'default': {
-				cmd: 'phpunit',
-				args: ['-c', 'phpunit.xml']
+		wp_readme_to_markdown: {
+			your_target: {
+				files: {
+					'README.md': 'readme.txt'
+				}
 			},
 		},
 
+		makepot: {
+			target: {
+				options: {
+					domainPath: '/languages',
+					mainFile: 'wp-syndicate.php',
+					potFilename: 'wp-syndicate.pot',
+					potHeaders: {
+						poedit: true,
+						'x-poedit-keywordslist': true
+					},
+					type: 'wp-plugin',
+					updateTimestamp: true
+				}
+			}
+		},
 	} );
-	grunt.loadNpmTasks( 'grunt-phpcs' );
 
-	// Testing tasks.
-	grunt.registerMultiTask('phpunit', 'Runs PHPUnit tests, including the ajax, external-http, and multisite tests.', function() {
-		grunt.util.spawn({
-			cmd: this.data.cmd,
-			args: this.data.args,
-			opts: {stdio: 'inherit'}
-		}, this.async());
-	});
+	grunt.loadNpmTasks( 'grunt-wp-i18n' );
+	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
+	grunt.registerTask( 'i18n', ['addtextdomain', 'makepot'] );
+	grunt.registerTask( 'readme', ['wp_readme_to_markdown'] );
 
-	grunt.registerTask( 'test', [ 'phpcs', 'phplint', 'phpunit' ] );
 	grunt.util.linefeed = '\n';
 
 };
