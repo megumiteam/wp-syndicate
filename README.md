@@ -80,3 +80,9 @@ gmail:horike37@gmail.com
 
 = 1.1.20 =
 * Add import Test
+
+= 1.1.21 =
+* Fixed menu_position in register_post_type.
+
+= 1.1.22 =
+* Add some hook.
