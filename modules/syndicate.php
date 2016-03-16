@@ -99,7 +99,7 @@ class WP_SYNDICATE {
 </td></tr>
 <tr><th><?php esc_html_e( 'Basic Auth User ID', WPSYND_DOMAIN ) ?></th><td><input type="text" name="wp_syndicate-basic-auth-user" size="40" value="<?php echo esc_attr( $user_id ); ?>" /></td></tr>
 <tr><th><?php esc_html_e( 'Basic Auth Password', WPSYND_DOMAIN ) ?></th><td><input type="password" name="wp_syndicate-basic-auth-pass" size="40" value="<?php echo esc_attr( $password ); ?>" /></td></tr>
-
+<?php do_action( 'wp_syndicate_add_metabox' ); ?>
 </table>
 <?php
 	}
@@ -129,6 +129,8 @@ class WP_SYNDICATE {
 			$action->import( $post_id );
 			add_action( 'save_post', array( $this, 'save_meta_box' ) );
 		}
+		
+		do_action( 'wp_syndicate_save_meta_box', $post_id );
 	}
 }
 new WP_SYNDICATE();

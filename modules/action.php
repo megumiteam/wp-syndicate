@@ -210,7 +210,7 @@ class WP_SYND_Action {
 				$flg = false;
 			} else {
 				update_post_meta( $update_post_id, $slug, 1 );
-				do_action( 'wp_syndicate_save_post', $update_post_id, $item, $updated );
+				do_action( 'wp_syndicate_save_post', $update_post_id, $item, $updated, $post_id );
 				$post_ids[] = $update_post_id;
 			}
 		} 
