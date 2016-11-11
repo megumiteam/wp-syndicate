@@ -145,7 +145,7 @@ class WP_SYND_Action {
 			$this->is_enclosure = false;
 			
 			//投稿ID取得
-			$slug = $post->post_name . '_' . $item->get_id();
+			$slug = '_' . $post->post_name . '_' . $item->get_id();
 			$set_post = get_page_by_path( sanitize_title($slug), OBJECT, $post_type );
 			$set_post_id = $set_post == null ? '' : $set_post->ID;
 			
