@@ -2,7 +2,7 @@
 
 class WP_Syndicate_WP_Cron_Test extends WP_UnitTestCase {
 
-	private $feeds = array( 'sample-1' => 'https://raw.githubusercontent.com/horike37/wp-syndicate/master/tests/testdata/sample-1.xml' );
+	private $feeds = array( 'sample-1' => 'https://raw.githubusercontent.com/megumiteam/wp-syndicate/master/tests/testdata/sample-1.xml' );
 	private $action;
 
 	public function setUp() {
