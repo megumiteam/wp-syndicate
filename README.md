@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/horike37/wp-syndicate.svg?branch=master)](https://travis-ci.org/horike37/wp-syndicate)
-#WP-Syndicate
+
+# WP-Syndicate
 * Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
 * Tags:feed, rss
 * Requires at least: 4.1
