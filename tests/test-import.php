@@ -3,11 +3,11 @@
 class WP_Syndicate_Import_Test extends WP_UnitTestCase {
 
 	private $feeds = array(
-						'sample-1' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-1.xml',
-						'sample-2' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-2.xml',
-						'sample-3' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-3.xml',
-						'sample-4' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-4.xml',
-						'sample-5' => 'https://raw.githubusercontent.com/horike37/wp-syndicate-test-data/master/core/sample-5.xml',
+						'sample-1' => 'https://raw.githubusercontent.com/horike37/wp-syndicate/master/tests/testdata/sample-1.xml',
+						'sample-2' => 'https://raw.githubusercontent.com/horike37/wp-syndicate/master/tests/testdata/sample-2.xml',
+						'sample-3' => 'https://raw.githubusercontent.com/horike37/wp-syndicate/master/tests/testdata/sample-3.xml',
+						'sample-4' => 'https://raw.githubusercontent.com/horike37/wp-syndicate/master/tests/testdata/sample-4.xml',
+						'sample-5' => 'https://raw.githubusercontent.com/horike37/wp-syndicate/master/tests/testdata/sample-5.xml',
 						);
 	private $action;
 
@@ -300,4 +300,3 @@ class WP_Syndicate_Import_Test extends WP_UnitTestCase {
 		return $post_id;
 	}
 }
-

@@ -1,0 +1,21 @@
+<rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+<channel>
+	<title>Sample Feed</title>
+	<item>
+		<title>sample-5</title>
+		<guid isPermaLink="false">100</guid>
+		<pubDate>Fri, 26 Jun 2015 17:00:00 +0000</pubDate>
+		<content:encoded><![CDATA[<p>sample sample</p>
+<img src="https://github.com/horike37/wp-syndicate-test-data/raw/master/core/img/sample-5.jpg" />
+<p>sasasa</p>
+		]]></content:encoded>
+	</item>
+</channel>
+</rss>
