@@ -1,9 +1,9 @@
 === WP Syndicate ===
-Contributors: horike,megumithemes
+Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
 Tags:feed, rss
 Requires at least: 4.3
-Tested up to: 4.4.1
-Stable tag: 1.1.22
+Tested up to: 4.9.5
+Stable tag: 1.1.23
 
 == Description ==
 It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
@@ -13,10 +13,6 @@ If you find a bug, Please pull request [github](https://github.com/horike37/wp-s
 * Japanese(ja) - [Horike Takahiro](http://profiles.wordpress.org/horike)
 
 You can send your own language pack to me.
-
-Please contact to me.
-
-gmail:horike37@gmail.com
 
 = Contributors =
 * Horike Takahiro
@@ -72,7 +68,7 @@ gmail:horike37@gmail.com
 * Add filter hook args
 
 = 1.1.18 =
-* When update post, exclude post_status, post_author, post_type 
+* When update post, exclude post_status, post_author, post_type
 
 = 1.1.19 =
 * Simple Pie cache is disable
@@ -85,3 +81,6 @@ gmail:horike37@gmail.com
 
 = 1.1.22 =
 * Add some hook.
+
+= 1.1.23 =
+* Fixed a bug that the syndication schedule will not be deleted when it is trashed

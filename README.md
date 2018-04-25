@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/horike37/wp-syndicate.svg?branch=master)](https://travis-ci.org/horike37/wp-syndicate) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/horike37/WP-Syndicate/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/horike37/WP-Syndicate/?branch=master)
+[![Build Status](https://travis-ci.org/horike37/wp-syndicate.svg?branch=master)](https://travis-ci.org/horike37/wp-syndicate)
 #WP-Syndicate
-* Contributors: horike,megumithemes
+* Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
 * Tags:feed, rss
 * Requires at least: 4.1
 * Tested up to: 4.2.2
@@ -73,7 +73,7 @@ gmail:horike37@gmail.com
 * Add filter hook args
 
 = 1.1.18 =
-* When update post, exclude post_status, post_author, post_type 
+* When update post, exclude post_status, post_author, post_type
 
 = 1.1.19 =
 * Simple Pie cache is disable
@@ -86,3 +86,6 @@ gmail:horike37@gmail.com
 
 = 1.1.22 =
 * Add some hook.
+
+= 1.1.23 =
+* Fixed a bug that the syndication schedule will not be deleted when it is trashed
