@@ -15,12 +15,13 @@ class WP_SYND_Action {
 
 	public function __construct() {
 		add_filter( 'cron_schedules', array( $this, 'cron_schedules' ) );
+		add_action( 'publish_to_trash', array( $this, 'publish_to_trash' ));
 		add_action( 'save_post', array( $this, 'set_event' ) );
 		add_action( 'admin_head', array( $this, 'ping' ) );
 		add_action( 'template_redirect', array( $this, 'ping' ) );
 		add_action( 'init', array( $this, 'init' ) );
 	}
-	
+
 	public function init() {
 		$posts = get_posts($this->args);
 
@@ -30,6 +31,15 @@ class WP_SYND_Action {
 		foreach ( $posts as $post ) {
 			add_action( 'wp_syndicate_' . $post->post_name . '_import', array( $this, 'import' ) );
 		}
+	}
+
+	public function publish_to_trash($post) {
+		if ( 'wp-syndicate' !== $post->post_type )
+			return;
+
+		$hook = 'wp_syndicate_' .  str_replace( '__trashed', '', $post->post_name ) . '_import';
+		if ( wp_next_scheduled( $hook, array( $post->ID )) )
+			var_dump(wp_clear_scheduled_hook( $hook, array( $post->ID ) ));
 	}
 
 	public function ping() {
@@ -70,7 +80,7 @@ class WP_SYND_Action {
 
 		return $schedules;
 	}
-	
+
 	public function set_event($post_id) {
 
 		if ( wp_is_post_revision($post_id) )
@@ -105,7 +115,7 @@ class WP_SYND_Action {
 
 		$options = get_option( 'wp_syndicate_options' );
 		$post = get_post($post_id);
-		
+
 		if ( !is_object($post) )
 			return;
 
@@ -117,7 +127,7 @@ class WP_SYND_Action {
 			$feed->force_feed(true);
 			$feed->enable_cache(false);
 		}, 10);
-		
+
 		add_filter( 'wp_feed_cache_transient_lifetime' , array( $this, 'return_0' ) );
 		$rss = fetch_feed( $feed_url );
 		remove_filter( 'wp_feed_cache_transient_lifetime' , array( $this, 'return_0' ) );
@@ -143,19 +153,19 @@ class WP_SYND_Action {
 		$post_type = get_post_meta( $post_id, 'wp_syndicate-default-post-type', true );
 		foreach ( $rss_items as $item ) {
 			$this->is_enclosure = false;
-			
+
 			//投稿ID取得
 			$slug = $post->post_name . '_' . $item->get_id();
 			$set_post = get_page_by_path( sanitize_title($slug), OBJECT, $post_type );
 			$set_post_id = $set_post == null ? '' : $set_post->ID;
-			
+
 			if ( empty($set_post_id) ) {
 				global $wpdb;
 				$db_ret = $wpdb->get_row( $wpdb->prepare( "SELECT count(1) as cnt FROM $wpdb->postmeta WHERE meta_key='%s'", $slug) );
 				if ( $db_ret === null || $db_ret->cnt !== '0' )
-					continue; 
+					continue;
 			}
-			
+
 			if ( $registration_method == 'insert' && is_object($set_post) ) {
 				continue;
 			}
@@ -194,7 +204,7 @@ class WP_SYND_Action {
 			if ( $item->get_enclosure() && !empty($item->get_enclosure()->link) ) {
 				$this->is_enclosure = true;
 				$this->set_enclosure( $item->get_enclosure()->link );
-			} 
+			}
 
 			$this->match_count = 0;
 			$content = preg_replace_callback( '#<img([^>]*)src=["\']([^"\']+)["\']([^>]*)>#i',  array($this, 'update_link'), $content, -1 );
@@ -213,8 +223,8 @@ class WP_SYND_Action {
 				do_action( 'wp_syndicate_save_post', $update_post_id, $item, $updated, $post_id );
 				$post_ids[] = $update_post_id;
 			}
-		} 
-		
+		}
+
 		if ( $flg ) {
 			$subject = '[' . get_bloginfo( 'name' ) . ']' . __( 'feed import success', WPSYND_DOMAIN );
 			$msg = __( 'feed URL:', WPSYND_DOMAIN ) . $feed_url . "\n";
@@ -232,7 +242,7 @@ class WP_SYND_Action {
 			$msg .= admin_url('/post.php?post=' . $error_post_id . '&action=edit');
 			wp_mail( $options['error_mail'], $subject, $msg );
 		}
-		
+
 	}
 
 	public function return_0( $seconds ) {
@@ -240,7 +250,7 @@ class WP_SYND_Action {
 	}
 
 	public function update_link( $matches ) {
-	
+
 		if ( is_array($matches) && array_key_exists(2, $matches) && isset($this->post) && is_object($this->post) && is_a($this->post, 'wp_post_helper') ) {
 			$args    = array();
 			$user    = get_post_meta( $this->media_id, 'wp_syndicate-basic-auth-user', true );
@@ -266,18 +276,18 @@ class WP_SYND_Action {
 				if ( $url == $this->enclosure_url ) {
 					$thumnail_flg = true;
 				}
-				
+
 				$this->post->add_media($media, '', '', '', $thumnail_flg);
 				$this->match_count++;
 
 				return apply_filters( 'wp_syndicate_return_img', '<img' . $matches[1] . 'src="' . $url . '"' . $matches[3] . '>', $thumnail_flg, $url, $this->enclosure_url, $this->match_count );
 			} else {
 				return $matches[0];
-			} 
+			}
 		}
 		return $matches[0];
 	}
-	
+
 	public function set_enclosure($link) {
 		if ( !empty($link) && is_object($this->post) && is_a($this->post, 'wp_post_helper') ) {
 			$args    = array();

@@ -23,7 +23,7 @@ class WP_Syndicate_WP_Cron_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @取り込みの設定をゴミ箱に変更すればスケジュールから削除される
+	 * @取り込みの設定をゴミ箱に変更すればスケジュールから削除される。復元で再登録
 	 */
 	function test_set_import_schedule_to_trash() {
 		$key = 'test';
@@ -38,6 +38,10 @@ class WP_Syndicate_WP_Cron_Test extends WP_UnitTestCase {
 
 		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $feed_id ) );
 		$this->assertEquals( false, $event );
+
+		wp_untrash_post( $feed_id );
+		$event = wp_next_scheduled( 'wp_syndicate_' . $key . '_import', array( $feed_id ) );
+		$this->assertEquals( true, $event );
 	}
 
 	function create_data( $key, $feed, $post_status = 'publish', $post_type = 'post', $mode = 'insert', $user_id = 1 ) {
@@ -52,4 +56,3 @@ class WP_Syndicate_WP_Cron_Test extends WP_UnitTestCase {
 		return $post_id;
 	}
 }
-
