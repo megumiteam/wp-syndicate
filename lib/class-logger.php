@@ -70,7 +70,8 @@ class WP_SYND_Log_Operator {
 		register_post_type( 'wp-syndicate-log',
 			array(
 										'labels' => array( 'name' => __( 'Syndication Log', WPSYND_DOMAIN ) ),
-										'public' => true,
+										'public' => false,
+										'show_ui' => true,
 										'publicly_queryable' => false,
 										'has_archive' => false,
 										'hierarchical' => false,
