@@ -30,7 +30,8 @@ class WP_SYNDICATE {
 		register_post_type( 'wp-syndicate',
 			array(
 	    								'labels' => array( 'name' => __( 'Syndication', WPSYND_DOMAIN ) ),
-	    								'public' => true,
+	    								'public' => false,
+										'show_ui' => true,
 	    								'publicly_queryable' => false,
 										'has_archive' => false,
 	    								'hierarchical' => false,

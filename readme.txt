@@ -2,8 +2,8 @@
 Contributors: horike,amimotoami,webnist,wokamoto,gatespace,mt8biz
 Tags:feed, rss
 Requires at least: 4.3
-Tested up to: 4.9.5
-Stable tag: 1.1.23
+Tested up to: 6.0
+Stable tag: 1.2
 
 == Description ==
 It is a plug-in that WP Syndicate takes in an RSS feed, it is possible to capture the content of other sites on the WordPress site.
